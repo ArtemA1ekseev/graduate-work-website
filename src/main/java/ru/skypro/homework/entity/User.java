@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Data
 @Entity(name = "users")
@@ -17,7 +18,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String phone;
-    private String regDate;
+    private LocalDateTime regDate;
     private String city;
     private String image;
 }
