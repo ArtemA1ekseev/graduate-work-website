@@ -6,12 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@Entity
 public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
-    private Long id;
 
     private int author;
     private LocalDateTime createdAt;

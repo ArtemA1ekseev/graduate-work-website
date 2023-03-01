@@ -9,6 +9,7 @@ import javax.persistence.Id;
 @Entity
 public class Ads {
     @Id
+    private int id;
     private int pk;
     private int author;
     private int price;
