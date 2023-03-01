@@ -16,7 +16,7 @@ CRUD для объявлений на сайте: администратор м�
 ## Техническое задание проекта:
 - [ТЗ](https://skyengpublic.notion.site/02df5c2390684e3da20c7a696f5d463d)
 
-## Комада разработчиков "Half Java":
+## Комада разработчиков "Java Talents":
 
  - [Дениева Екатерина Юрьевна](https://github.com/Katy7711)
  - [Субботин Николай Юрьевич](https://github.com/nusubbotin/)
@@ -44,7 +44,7 @@ The [Openapi](https://drive.google.com/file/d/1NInRupH5y59DMAFvUDcd2C0kIWaMk93Q/
 ## Technical specification of the project:
 - [TS](https://skyengpublic.notion.site/02df5c2390684e3da20c7a696f5d463d)
 
-## The development team "Half Java":
+## The development team "Java Talents":
 
  - [Genieva Ekaterina Yurievna](https://github.com/Katy7711)
  - [Subbotin Nikolay Yurievich](https://github.com/nusubbotin/)
