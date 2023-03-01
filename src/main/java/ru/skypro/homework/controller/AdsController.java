@@ -15,8 +15,8 @@ public class AdsController {
     }
 
     @PostMapping
-    public ResponseEntity<AdsDto> addAds(@RequestBody CreateAds createAds) {
-        return ResponseEntity.ok(new AdsDto());
+    public ResponseEntity<Ads> addAds(@RequestBody CreateAds createAds) {
+        return ResponseEntity.ok(new Ads());
     }
 
     @GetMapping("/me")
@@ -28,39 +28,39 @@ public class AdsController {
         return ResponseEntity.ok(new ResponseWrapperAds());
     }
 
-    @GetMapping("/{ad_pk}/comment")
+    @GetMapping("/{ad_pk}/comments")
     public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@PathVariable("ad_pk") String adPk) {
         return ResponseEntity.ok(new ResponseWrapperAdsComment());
     }
 
-    @PostMapping("/{ad_pk}/comment")
-    public ResponseEntity<AdsCommentDto> addAdsComment(@PathVariable("ad_pk") String adPk, @RequestBody AdsCommentDto adsCommentDto) {
-        return ResponseEntity.ok(adsCommentDto);
+    @PostMapping("/{ad_pk}/comments")
+    public ResponseEntity<Comment> addAdsComment(@PathVariable("ad_pk") String adPk, @RequestBody Comment comment) {
+        return ResponseEntity.ok(comment);
     }
 
-    @DeleteMapping("/{ad_pk}/comment/{id}")
-    public ResponseEntity<AdsCommentDto> deleteAdsComment(@PathVariable("ad_pk") String adPk,
-                                                          @PathVariable int id) {
+    @DeleteMapping("/{ad_pk}/comments/{id}")
+    public ResponseEntity<Comment> deleteAdsComment(@PathVariable("ad_pk") String adPk,
+                                                    @PathVariable int id) {
         return ResponseEntity.ok().build();
     }
 
 
-    @GetMapping("/{ad_pk}/comment/{id}")
-    public ResponseEntity<AdsCommentDto> getAdsComment(@PathVariable("ad_pk") String adPk,
-                                                       @PathVariable int id) {
-        return ResponseEntity.ok(new AdsCommentDto());
+    @GetMapping("/{ad_pk}/comments/{id}")
+    public ResponseEntity<Comment> getAdsComment(@PathVariable("ad_pk") String adPk,
+                                                 @PathVariable int id) {
+        return ResponseEntity.ok(new Comment());
     }
 
 
-    @PatchMapping("/{ad_pk}/comment/{id}")
-    public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable("ad_pk") String adPk,
-                                                          @PathVariable int id,
-                                                          @RequestBody AdsCommentDto adsCommentDto) {
-        return ResponseEntity.ok(adsCommentDto);
+    @PatchMapping("/{ad_pk}/comments/{id}")
+    public ResponseEntity<Comment> updateAdsComment(@PathVariable("ad_pk") String adPk,
+                                                    @PathVariable int id,
+                                                    @RequestBody Comment comment) {
+        return ResponseEntity.ok(comment);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AdsDto> removeAds(@PathVariable int id) {
+    public ResponseEntity<Ads> removeAds(@PathVariable int id) {
         return ResponseEntity.ok().build();
     }
 
@@ -72,7 +72,7 @@ public class AdsController {
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<AdsDto> updateAds(@PathVariable int id, @RequestBody AdsDto adsDto) {
-        return ResponseEntity.ok(adsDto);
+    public ResponseEntity<Ads> updateAds(@PathVariable int id, @RequestBody Ads ads) {
+        return ResponseEntity.ok(ads);
     }
 }
