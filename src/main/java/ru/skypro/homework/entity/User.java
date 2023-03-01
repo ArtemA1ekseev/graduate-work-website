@@ -17,8 +17,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String phone;
-    @Enumerated(EnumType.ORDINAL)
-    private Role role;
-    private String username;
-    private String password;
+    private String regDate;
+    private String city;
+    private String image;
 }
