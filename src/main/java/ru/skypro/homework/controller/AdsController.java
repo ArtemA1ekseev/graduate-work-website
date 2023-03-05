@@ -29,31 +29,32 @@ public class AdsController {
     }
 
     @GetMapping("/{ad_pk}/comments")
-    public ResponseEntity<ResponseWrapperAdsComment> getAdsComments(@PathVariable("ad_pk") String adPk) {
+    public ResponseEntity<ResponseWrapperAdsComment> getComments(@PathVariable("ad_pk") String adPk) {
         return ResponseEntity.ok(new ResponseWrapperAdsComment());
     }
 
     @PostMapping("/{ad_pk}/comments")
-    public ResponseEntity<CommentDto> addAdsComment(@PathVariable("ad_pk") String adPk, @RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentDto> addComments(@PathVariable("ad_pk") String adPk, @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentDto);
     }
 
     @DeleteMapping("/{ad_pk}/comments/{id}")
-    public ResponseEntity<CommentDto> deleteAdsComment(@PathVariable("ad_pk") String adPk,
+    public ResponseEntity<CommentDto> deleteComments(@PathVariable("ad_pk") String adPk,
                                                        @PathVariable int id) {
         return ResponseEntity.ok().build();
     }
 
 
     @GetMapping("/{ad_pk}/comments/{id}")
-    public ResponseEntity<CommentDto> getAdsComment(@PathVariable("ad_pk") String adPk,
+    public ResponseEntity<CommentDto> getComments(@PathVariable("ad_pk") String adPk,
                                                     @PathVariable int id) {
         return ResponseEntity.ok(new CommentDto());
     }
 
 
     @PatchMapping("/{ad_pk}/comments/{id}")
-    public ResponseEntity<CommentDto> updateAdsComment(@PathVariable("ad_pk") String adPk,
+    public ResponseEntity<CommentDto>
+    updateComments(@PathVariable("ad_pk") String adPk,
                                                        @PathVariable int id,
                                                        @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentDto);
@@ -66,7 +67,7 @@ public class AdsController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<FullAds> getAds(@PathVariable int id) {
+    public ResponseEntity<FullAds> getFullAd(@PathVariable int id) {
         return ResponseEntity.ok(new FullAds());
     }
 
