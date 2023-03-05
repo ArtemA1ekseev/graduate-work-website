@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.dto.UserDto;
 
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
@@ -12,13 +12,13 @@ import ru.skypro.homework.dto.User;
 public class UserController {
 
     @PatchMapping("/me")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userDto);
     }
 
     @PatchMapping("/me/image")
-    public ResponseEntity<User> updateUserImage(@RequestBody User user) {
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDto> updateUserImage(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("/me")
