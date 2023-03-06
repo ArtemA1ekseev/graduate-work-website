@@ -3,6 +3,7 @@ package ru.skypro.homework.entity;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 public class AdsComment {
     @Id
+    @GeneratedValue
     private int pk;
     private int author;
     private LocalDateTime createdAt;

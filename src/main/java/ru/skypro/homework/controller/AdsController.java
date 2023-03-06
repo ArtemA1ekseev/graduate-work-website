@@ -3,11 +3,18 @@ package ru.skypro.homework.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.service.impl.AdsServiceImpl;
 
 @RestController
 @RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
+
+    private AdsServiceImpl adsService;
+
+    public AdsController(AdsServiceImpl adsService) {
+        this.adsService = adsService;
+    }
 
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds() {
@@ -16,7 +23,8 @@ public class AdsController {
 
     @PostMapping
     public ResponseEntity<AdsDto> addAds(@RequestBody CreateAds createAds) {
-        return ResponseEntity.ok(new AdsDto());
+        adsService.addAds(createAds);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")
