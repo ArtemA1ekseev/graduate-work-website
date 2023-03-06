@@ -2,19 +2,19 @@
 ###
 GET http://localhost:8080/get
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 ###
-GET http://localhost:8080/ads/asddsfsdf/comment
+GET http://localhost:8080/adsDto/asddsfsdf/commentDto
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 ###
 POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-   "username": "user",
+   "username": "userDto",
    "password": "password",
    "firstName":  " asdad",
    "lastName": " asdad",
@@ -31,43 +31,43 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/ads/me
+GET http://localhost:8080/adsDto/me
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 ###
 GET http://localhost:8080/users/me
 Content-Type: application/json
-Authorization: Basic user@gmail.com password
+Authorization: Basic userDto@gmail.com password
 
 ###
 PATCH http://localhost:8080/users/me
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 {
   "phone": "33333",
   "lastName": "Ivanov",
   "firstName": "Ivan",
-  "email": "user",
+  "email": "userDto",
   "id": 1
 }
 
 ###
 GET http://localhost:8080/users/1
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 ###
-GET http://localhost:8080/ads
+GET http://localhost:8080/adsDto
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 
 ###
 POST http://localhost:8080/users/set_password
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 {
   "newPassword": "password",
@@ -75,9 +75,9 @@ Authorization: Basic user password
 }
 
 ###
-POST http://localhost:8080/ads
+POST http://localhost:8080/adsDto
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 {
   "image": "123",
@@ -88,9 +88,9 @@ Authorization: Basic user password
 }
 
 ###
-GET http://localhost:8080/ads
+GET http://localhost:8080/adsDto
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic userDto password
 
 
 
