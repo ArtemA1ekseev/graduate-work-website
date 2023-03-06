@@ -2,11 +2,10 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-public class Comment {
+public class CommentDto {
 
     private int author;
     private LocalDateTime createdAt;

@@ -10,9 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 public class AdsComment {
     @Id
-    private int id;
-    private int author;
     private int pk;
+    private int author;
     private LocalDateTime createdAt;
     private String text;
 }
