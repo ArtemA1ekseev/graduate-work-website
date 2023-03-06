@@ -15,14 +15,14 @@ public class MappingUtils {
     public AdsDto mapToAdsDto(Ads entity){
         AdsDto dto = new AdsDto();
         dto.setPk(entity.getPk());
-        dto.setAuthor(entity.getAuthor());
+        dto.setAuthor(entity.getAuthor().getId());
         dto.setPrice(entity.getPrice());
         dto.setTitle(entity.getTitle());
-        dto.setImage(entity.getImage());
+        dto.setImage(entity.getImage().toString());
         return dto;
     }
 
-    public Ads mapToAdsEntity(AdsDto dto){
+    public Ads mapToAdsEntity(AdsDto dto) {
         Ads entity = new Ads();
         entity.setPk(entity.getPk());
         entity.setAuthor(entity.getAuthor());
@@ -32,8 +32,7 @@ public class MappingUtils {
         return entity;
 
 
-
-
+    }
 }
 
 

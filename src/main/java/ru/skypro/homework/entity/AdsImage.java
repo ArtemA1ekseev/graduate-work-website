@@ -21,50 +21,50 @@ public class AdsImage {
     @OneToOne
     private Ads ads;
 
-    public AdsImage() {
-    }
-
-    public int getPk() {
-        return pk;
-    }
-
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    public Ads getAds() {
-        return ads;
-    }
-
-    public void setAds(Ads ads) {
-        this.ads = ads;
-    }
+//    public AdsImage() {
+//    }
+//
+//    public int getPk() {
+//        return pk;
+//    }
+//
+//    public Long getSize() {
+//        return size;
+//    }
+//
+//    public void setSize(Long size) {
+//        this.size = size;
+//    }
+//
+//    public String getPath() {
+//        return path;
+//    }
+//
+//    public void setPath(String path) {
+//        this.path = path;
+//    }
+//
+//    public String getMediaType() {
+//        return mediaType;
+//    }
+//
+//    public void setMediaType(String mediaType) {
+//        this.mediaType = mediaType;
+//    }
+//
+//    public byte[] getData() {
+//        return data;
+//    }
+//
+//    public void setData(byte[] data) {
+//        this.data = data;
+//    }
+//
+//    public Ads getAds() {
+//        return ads;
+//    }
+//
+//    public void setAds(Ads ads) {
+//        this.ads = ads;
+//    }
 }
