@@ -21,8 +21,12 @@ public class ImageController {
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> updateAdsImage(@PathVariable int id, @RequestParam MultipartFile imageFile) throws IOException {
-        imageService.addImage(id, imageFile);
-        return ResponseEntity.ok().build();
+    public ResponseEntity updateAdsImage(@PathVariable int id, @RequestParam MultipartFile imageFile) throws IOException {
+        long imageMbSize = 10;
+        if (imageFile.getSize() < imageMbSize * (1024 * 1024)) {
+            imageService.addImage(id, imageFile);
+            return ResponseEntity.ok().build();
+        }
+            return ResponseEntity.badRequest().body("Размер файла не должен превышать " + imageMbSize + " Мб");
     }
 }
