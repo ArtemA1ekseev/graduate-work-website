@@ -19,9 +19,7 @@ import java.util.List;
 public class AdsServiceImpl implements AdsService {
 
     private final AdsRepository adsRepository;
-
     private final UserRepository userRepository;
-
     private final AdsMapper adsMapper;
 
     public AdsServiceImpl(AdsRepository adsRepository, UserRepository userRepository, AdsMapper adsMapper) {
@@ -61,8 +59,8 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto updateAdvert(Integer id, AdsDto adsDto) {
         Ads ads = adsRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
-        ads.setUser(userRepository.findById(adsDto.getAuthor().getId()).orElseThrow(UserNotFoundException::new));
-        ads.setImage(adsDto.getImage().getAds().getImage()); // ???
+        ads.setUsers(userRepository.findById(adsDto.getAuthor()).orElseThrow(UserNotFoundException::new));
+        ads.setImage(adsDto.getImage());
         ads.setPrice(adsDto.getPrice());
         ads.setTitle(adsDto.getTitle());
         adsRepository.save(ads);

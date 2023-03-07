@@ -11,8 +11,7 @@ public class CreateAds {
 
     private Integer pk;
 
-    private int price;
+    private Integer price;
 
     private String title;
-
 }

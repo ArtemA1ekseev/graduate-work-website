@@ -17,14 +17,13 @@ public class Ads {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
     private Integer price;
     private String title;
     private String image;
     private String description;
 
     @ManyToOne
-    private User user;
+    private Users users;
 
     @ManyToMany
     private List<AdsComment> adsCommentList;

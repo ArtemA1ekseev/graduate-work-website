@@ -3,7 +3,7 @@ package ru.skypro.homework.service.impl;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.ResponseWrapperUser;
 import ru.skypro.homework.dto.UserDto;
-import ru.skypro.homework.entity.User;
+import ru.skypro.homework.entity.Users;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
@@ -34,19 +34,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
-        user.setEmail(userDto.getEmail());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setPhone(userDto.getPhone());
-        user.setUsername(userDto.getEmail());
-        userRepository.save(user);
+        Users users = userRepository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
+        users.setEmail(userDto.getEmail());
+        users.setFirstName(userDto.getFirstName());
+        users.setLastName(userDto.getLastName());
+        users.setPhone(userDto.getPhone());
+        users.setUsername(userDto.getEmail());
+        userRepository.save(users);
         return userDto;
     }
 
     @Override
     public UserDto getUser(Integer id) {
-        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        return userMapper.usersEntityToUserDto(user);
+        Users users = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return userMapper.usersEntityToUserDto(users);
     }
 }

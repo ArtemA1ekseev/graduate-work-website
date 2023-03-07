@@ -1,14 +1,17 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
-
 import java.time.OffsetDateTime;
 
 @Data
-public class CommentDto {
+public class AdsCommentDto {
 
-    private int author;
+    private Integer author;
+
     private OffsetDateTime createdAt;
-    private int pk;
+
+    private Integer pk;
+
     private String text;
+
 }

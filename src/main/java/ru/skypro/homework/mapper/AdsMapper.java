@@ -13,16 +13,16 @@ import java.util.List;
 public interface AdsMapper {
 
     @Mapping(source = "pk", target = "id")
-    default Ads createAdsDtoToAdvertEntity(CreateAds createAdsDto);
+    Ads createAdsDtoToAdvertEntity(CreateAds createAdsDto);
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "user.id", target = "author")
-    default AdsDto advertEntityToAdsDto(Ads ads);
+    @Mapping(source = "users.id", target = "author")
+    AdsDto advertEntityToAdsDto(Ads ads);
 
-    @Mapping(source = "user.firstName", target = "authorFirstName")
-    @Mapping(source = "user.lastName", target = "authorLastName")
-    @Mapping(source = "user.email", target = "email")
-    @Mapping(source = "user.phone", target = "phone")
+    @Mapping(source = "users.firstName", target = "authorFirstName")
+    @Mapping(source = "users.lastName", target = "authorLastName")
+    @Mapping(source = "users.email", target = "email")
+    @Mapping(source = "users.phone", target = "phone")
     @Mapping(source = "id", target = "pk")
     FullAds advertEntityToFullAdsDto(Ads ads);
 

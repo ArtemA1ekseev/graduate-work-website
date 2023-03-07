@@ -6,13 +6,13 @@ import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.CommentService;
 
-
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class AdsController {
 
     private final AdsService adsService;
+
     private final CommentService commentService;
 
     public AdsController(AdsService adsService, CommentService commentService) {
@@ -62,8 +62,8 @@ public class AdsController {
     }
 
     @PostMapping("{ad_pk}/comment")
-    public ResponseEntity<CommentDto> addAdsComment(@PathVariable int ad_pk, @RequestBody CommentDto commentDto) {
-        return ResponseEntity.ok(commentService.createComment(ad_pk, commentDto));
+    public ResponseEntity<AdsCommentDto> addAdsComment(@PathVariable int ad_pk, @RequestBody AdsCommentDto adsCommentDto) {
+        return ResponseEntity.ok(commentService.createComment(ad_pk, adsCommentDto));
     }
 
     @DeleteMapping("{ad_pk}/comment/{id}")
@@ -74,15 +74,16 @@ public class AdsController {
     }
 
     @GetMapping("{ad_pk}/comment/{id}")
-    public ResponseEntity<CommentDto> getAdsComment(@PathVariable int ad_pk,
+    public ResponseEntity<AdsCommentDto> getAdsComment(@PathVariable int ad_pk,
                                                        @PathVariable int id) {
         return ResponseEntity.ok(commentService.getAdsComment(ad_pk, id));
     }
 
+
     @PatchMapping("{ad_pk}/comment/{id}")
-    public ResponseEntity<CommentDto> updateAdsComment(@PathVariable int ad_pk,
+    public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable int ad_pk,
                                                           @PathVariable int id,
-                                                          @RequestBody CommentDto comment) {
+                                                          @RequestBody AdsCommentDto comment) {
         return ResponseEntity.ok(commentService.updateAdsComment(ad_pk, id, comment));
     }
 }

@@ -21,7 +21,7 @@ public class AdsComment {
     private String text;
 
     @ManyToOne
-    private User user;
+    private Users users;
 
     @ManyToOne
     private Ads ads;

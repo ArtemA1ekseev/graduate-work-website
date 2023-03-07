@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class ResponseWrapperAdsComment {
 
-    private int count;
+    private Integer count;
 
-    private List<CommentDto> results;
+    private List<AdsCommentDto> results;
 }

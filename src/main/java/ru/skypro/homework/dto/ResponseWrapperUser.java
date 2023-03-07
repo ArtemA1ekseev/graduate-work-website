@@ -6,7 +6,7 @@ import java.util.List;
 @Data
 public class ResponseWrapperUser {
 
-    private int count;
+    private Integer count;
 
     private List<UserDto> results;
 }
