@@ -22,10 +22,10 @@ public class MappingUtils {
     public AdsDto mapToAdsDto(Ads entity) {
         AdsDto adsDto = new AdsDto();
         adsDto.setPk(entity.getPk());
-        adsDto.setAuthor(entity.getAuthor().getId());
+        adsDto.setAuthor(mapToUserDto(entity.getAuthor()));
         adsDto.setPrice(entity.getPrice());
         adsDto.setTitle(entity.getTitle());
-        adsDto.setImage(entity.getImage().toString());
+        adsDto.setImage(entity.getImage());
         return adsDto;
     }
 
