@@ -1,24 +1,36 @@
 package ru.skypro.homework.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
+@Entity
 @Data
-@Entity(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
     @Id
-    @GeneratedValue
-    private int id;
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     private String firstName;
     private String lastName;
+    private String email;
     private String phone;
-    private LocalDateTime regDate;
-    private String city;
-    private String image;
+    private String username;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany
-    private Collection<Ads> adsCollection;
+    private List<Ads> adsList;
+
+    @OneToMany
+    private List<AdsComment> adsCommentList;
 }

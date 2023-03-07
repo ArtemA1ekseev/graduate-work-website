@@ -1,11 +1,10 @@
-
 ###
 GET http://localhost:8080/get
 Content-Type: application/json
 Authorization: Basic userDto password
 
 ###
-GET http://localhost:8080/adsDto/asddsfsdf/commentDto
+GET http://localhost:8080/adsDto/asddsfsdf/adsComment
 Content-Type: application/json
 Authorization: Basic userDto password
 
@@ -14,13 +13,12 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-   "username": "userDto",
-   "password": "password",
-   "firstName":  " asdad",
-   "lastName": " asdad",
-   "phone":  " asdad"
+  "username": "userDto",
+  "password": "password",
+  "firstName":  " asdad",
+  "lastName": " asdad",
+  "phone":  " asdad"
 }
-
 ###
 POST http://localhost:8080/register
 Content-Type: application/json
@@ -91,8 +89,3 @@ Authorization: Basic userDto password
 GET http://localhost:8080/adsDto
 Content-Type: application/json
 Authorization: Basic userDto password
-
-
-
-
-

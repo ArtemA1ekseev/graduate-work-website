@@ -1,67 +1,32 @@
 package ru.skypro.homework.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Data
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ads {
+
     @Id
-    @GeneratedValue
-    private int pk;
-    private int price;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+
+    private Integer price;
     private String title;
+    private String image;
     private String description;
+
     @ManyToOne
-    private User author;
-    @OneToOne
-    private AdsImage image;
+    private User user;
 
-    public Ads() {
-    }
+    @ManyToMany
+    private List<AdsComment> adsCommentList;
 
-//    public int getPk() {
-//        return pk;
-//    }
-//
-//    public User getAuthor() {
-//        return author;
-//    }
-//
-//    public void setAuthor(User author) {
-//        this.author = author;
-//    }
-//
-//    public int getPrice() {
-//        return price;
-//    }
-//
-//    public void setPrice(int price) {
-//        this.price = price;
-//    }
-//
-//    public AdsImage getImage() {
-//        return image;
-//    }
-//
-//    public void setImage(AdsImage image) {
-//        this.image = image;
-//    }
-//
-//    public String getTitle() {
-//        return title;
-//    }
-//
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
-//
-//    public String getDescription() {
-//        return description;
-//    }
-//
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
 }

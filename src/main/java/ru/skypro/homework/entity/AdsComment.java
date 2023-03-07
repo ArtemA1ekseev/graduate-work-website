@@ -1,19 +1,28 @@
 package ru.skypro.homework.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.time.OffsetDateTime;
 
-@Data
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdsComment {
+
     @Id
-    @GeneratedValue
-    private int pk;
-    private int author;
-    private LocalDateTime createdAt;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private OffsetDateTime createdAt;
     private String text;
+
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Ads ads;
 }

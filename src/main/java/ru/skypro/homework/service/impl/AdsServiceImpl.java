@@ -3,50 +3,78 @@ package ru.skypro.homework.service.impl;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAds;
+import ru.skypro.homework.dto.FullAds;
+import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.entity.Ads;
-import ru.skypro.homework.entity.User;
+import ru.skypro.homework.exception.AdvertNotFoundException;
+import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.repository.AdsRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
-import ru.skypro.homework.utils.MappingUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AdsServiceImpl implements AdsService {
 
-    private AdsRepository adsRepository;
-    private MappingUtils mappingUtils;
+    private final AdsRepository adsRepository;
 
-    public AdsServiceImpl(AdsRepository repository) {
-        this.adsRepository = repository;
+    private final UserRepository userRepository;
+
+    private final AdsMapper adsMapper;
+
+    public AdsServiceImpl(AdsRepository adsRepository, UserRepository userRepository, AdsMapper adsMapper) {
+        this.adsRepository = adsRepository;
+        this.userRepository = userRepository;
+        this.adsMapper = adsMapper;
     }
 
-    public void addAds(CreateAds createAds) {
-        Ads ads = new Ads();
-        ads.setTitle(createAds.getTitle());
-        ads.setDescription(createAds.getDescription());
-        ads.setPrice(createAds.getPrice());
+    @Override
+    public ResponseWrapperAds getAllAds() {
+        List<AdsDto> adsDtoDtoList = adsMapper.advertEntitiesToAdsDtos(adsRepository.findAllAdverts());
+        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+        responseWrapperAds.setCount(adsDtoDtoList.size());
+        responseWrapperAds.setResults(adsDtoDtoList);
+        return responseWrapperAds;
+    }
+
+    @Override
+    public AdsDto createAds(CreateAds createAdsDto) {
+        Ads createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
+        adsRepository.save(createdAds);
+        return adsMapper.advertEntityToAdsDto(createdAds);
+    }
+
+    @Override
+    public void removeAds(Integer id) {
+        Ads ads = adsRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
+        adsRepository.delete(ads);
+    }
+
+    @Override
+    public FullAds getAds(Integer id) {
+        Ads ads = adsRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
+        return adsMapper.advertEntityToFullAdsDto(ads);
+    }
+
+    @Override
+    public AdsDto updateAdvert(Integer id, AdsDto adsDto) {
+        Ads ads = adsRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
+        ads.setUser(userRepository.findById(adsDto.getAuthor().getId()).orElseThrow(UserNotFoundException::new));
+        ads.setImage(adsDto.getImage().getAds().getImage()); // ???
+        ads.setPrice(adsDto.getPrice());
+        ads.setTitle(adsDto.getTitle());
         adsRepository.save(ads);
-    }
-
-    public Ads getAdsById(int adsId) {
-        return adsRepository.findById(adsId).get();
+        return adsDto;
     }
 
     @Override
-    public List<AdsDto> findByTitle(String title) {
-        return adsRepository.findByTitle(title).stream().map(mappingUtils::mapToAdsDto).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<AdsDto> findAdsByAuthor(User author) {
-        return adsRepository.findAdsByAuthor(author).stream().map(mappingUtils::mapToAdsDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<AdsDto> findAdsByDescriptionContains(String part) {
-        return adsRepository.findAdsByDescriptionContains(part).stream().map(mappingUtils::mapToAdsDto).collect(Collectors.toList());
+    public ResponseWrapperAds findAds(String search) {
+        List<AdsDto> adsDtoDtoList = adsMapper.advertEntitiesToAdsDtos(adsRepository.findAds(search));
+        ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
+        responseWrapperAds.setCount(adsDtoDtoList.size());
+        responseWrapperAds.setResults(adsDtoDtoList);
+        return responseWrapperAds;
     }
 }

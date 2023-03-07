@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.LoginReq;
 import ru.skypro.homework.dto.RegReq;
-import ru.skypro.homework.dto.RegisterReq;
+import io.swagger.v3.oas.annotations.Operation;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.service.AuthService;
 

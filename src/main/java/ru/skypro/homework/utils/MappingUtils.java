@@ -1,4 +1,4 @@
-package ru.skypro.homework.utils;
+/*package ru.skypro.homework.utils;
 
 
 import org.springframework.stereotype.Service;
@@ -75,7 +75,7 @@ public class MappingUtils {
         adsCommentEntity.setCreatedAt(commentDto.getCreatedAt());
         return adsCommentEntity;
     }
-}
+}*/
 
 
 
