@@ -13,6 +13,7 @@ import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,7 +31,8 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public ResponseWrapperAds getAllAds() {
-        List<AdsDto> adsDtoDtoList = adsMapper.advertEntitiesToAdsDtos(adsRepository.findAllAdverts());
+        List<AdsDto> adsDtoDtoList;
+        adsDtoDtoList = adsMapper.advertEntitiesToAdsDtos(adsRepository.findAllAdverts());
         ResponseWrapperAds responseWrapperAds = new ResponseWrapperAds();
         responseWrapperAds.setCount(adsDtoDtoList.size());
         responseWrapperAds.setResults(adsDtoDtoList);

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,7 +30,7 @@ public class Users {
     private Role role;
 
     @OneToMany
-    private List<Ads> adsList;
+    private List<Ads> adsList=new ArrayList<>();
 
     @OneToMany
     private List<AdsComment> adsCommentList;
