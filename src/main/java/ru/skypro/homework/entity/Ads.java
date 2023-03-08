@@ -20,13 +20,15 @@ public class Ads {
 
     private Integer price;
     private String title;
-    private String image;
+
     private String description;
+    @OneToMany
+    private List<AdsImage> image;
 
     @ManyToOne
     private Users users;
 
-    @ManyToMany
+    @OneToMany
     private List<AdsComment> adsCommentList;
 
 }
