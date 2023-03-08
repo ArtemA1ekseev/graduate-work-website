@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://userDto-images.githubusercontent.com/113195869/222171158-867e2339-b233-4f86-aa3b-ce75c0b7275e.png" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://user-images.githubusercontent.com/113195869/223837571-07b56d4a-4858-4f86-8d6e-76325dd38524.png" width="400" alt="Laravel Logo"></a></p>
 
 # (RU) Дипломный проект
 ## Групповая дипломная работа. Поток - DSprint 3.0.
