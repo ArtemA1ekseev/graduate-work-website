@@ -22,8 +22,8 @@ public class Ads {
     private String title;
 
     private String description;
-    @OneToMany
-    private List<AdsImage> image;
+
+    private String image;
 
     @ManyToOne
     private Users users;

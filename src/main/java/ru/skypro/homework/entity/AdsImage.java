@@ -2,10 +2,7 @@ package ru.skypro.homework.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -18,7 +15,7 @@ public class AdsImage {
     private String path;
     private String mediaType;
     private byte[] data;
-    @OneToOne
+    @ManyToOne
     private Ads ads;
 
 //    public AdsImage() {
