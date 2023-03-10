@@ -28,7 +28,7 @@ public class Ads {
     @ManyToOne
     private Users users;
 
-    @OneToMany
+    @OneToMany(mappedBy = "ads")
     private List<AdsComment> adsCommentList;
 
 }

@@ -15,6 +15,7 @@ public class AdsImage {
     private String path;
     private String mediaType;
     private byte[] data;
+
     @ManyToOne
     private Ads ads;
 

@@ -29,9 +29,9 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany
-    private List<Ads> adsList=new ArrayList<>();
+    @OneToMany(mappedBy = "users")
+    private List<Ads> adsList;
 
-    @OneToMany
+    @OneToMany(mappedBy = "users")
     private List<AdsComment> adsCommentList;
 }
