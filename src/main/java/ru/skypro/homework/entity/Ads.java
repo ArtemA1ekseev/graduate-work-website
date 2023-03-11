@@ -31,7 +31,9 @@ public class Ads {
     /** "users/пользователь" field */
     @ManyToOne
     private Users users;
-    /** "adsCommentList/список комментариев" field */
+    /** "adsCommentList/список комментариев" field
+     * @see AdsComment
+     * */
     @OneToMany(mappedBy = "ads")
     private List<AdsComment> adsCommentList;
 
