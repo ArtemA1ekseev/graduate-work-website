@@ -15,24 +15,35 @@ import java.util.List;
 @AllArgsConstructor
 public class Users {
 
-    /** "ID" field */
+    /** "ID/id пользователя" field */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    /** "firstName/имя" field */
     private String firstName;
+    /** "lastName/фамилия" field */
     private String lastName;
+    /** "email" field */
     private String email;
+    /** "phone/номер телефона" field */
     private String phone;
+    /** "username/имя пользователя" field */
     private String username;
+    /** "password/пароль" field */
     private String password;
-
+    /** "role/тип пользователя" (USER, ADMIN) field */
     @Enumerated(EnumType.STRING)
     private Role role;
-
+    /**
+     * "adsList/список обьявлений" field
+     * @see Ads
+     */
     @OneToMany(mappedBy = "users")
     private List<Ads> adsList;
-
+    /**
+     * "adsCommentList/список комментариев" field
+     * @see AdsComment
+     * */
     @OneToMany(mappedBy = "users")
     private List<AdsComment> adsCommentList;
 }

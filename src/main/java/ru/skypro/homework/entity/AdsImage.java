@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 public class AdsImage {
 
-    /** "pk" field */
+    /** "pk/id изображения" field */
     @Id
     @GeneratedValue
     private int pk;

@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class AdsComment {
 
-    /** "ID" field */
+    /** "ID/ id комментария" field */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

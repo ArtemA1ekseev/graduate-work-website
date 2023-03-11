@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Ads {
 
-    /** "ID" field */
+    /** "ID/ id обьявления" field */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -31,7 +31,8 @@ public class Ads {
     /** "users/пользователь" field */
     @ManyToOne
     private Users users;
-    /** "adsCommentList/список комментариев" field
+    /**
+     * "adsCommentList/список комментариев" field
      * @see AdsComment
      * */
     @OneToMany(mappedBy = "ads")
