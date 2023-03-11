@@ -1,11 +1,12 @@
 package ru.skypro.homework.service;
 
-
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
-
+/**
+ * Interface AdsService (advertisement/объявление).
+ */
 public interface AdsService {
 
     ResponseWrapperAds getAllAds();
