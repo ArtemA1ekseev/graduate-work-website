@@ -1,21 +1,27 @@
 package ru.skypro.homework.entity;
 
 import lombok.Data;
-
 import javax.persistence.*;
-
+/**
+ * Class of AdsImage (advertisement image/изображение в объявлениях)
+ */
 @Data
 @Entity
 public class AdsImage {
 
+    /** "pk" field */
     @Id
     @GeneratedValue
     private int pk;
+    /** "size" field */
     private Long size;
+    /** "path" field */
     private String path;
+    /** "mediaType" field */
     private String mediaType;
+    /** "data" field */
     private byte[] data;
-
+    /** "ads/объявление" field */
     @ManyToOne
     private Ads ads;
 

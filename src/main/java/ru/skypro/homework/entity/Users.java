@@ -4,17 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Role;
-
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Class of Users (users/пользователь)
+ */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Users {
 
+    /** "ID" field */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
