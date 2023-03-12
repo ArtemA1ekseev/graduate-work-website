@@ -21,4 +21,6 @@ public interface AdsCommentRepository extends JpaRepository<AdsComment, Integer>
     List<AdsComment> findAllByAdsId(Integer adsId);
 
     List<AdsComment> findAllByAdsIdOrderByIdDesc(Integer adsId);
+
+    void deleteAllByAdsId(Integer adsId);
 }
