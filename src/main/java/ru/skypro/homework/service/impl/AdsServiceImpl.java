@@ -57,10 +57,10 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto createAds(MultipartFile image, CreateAds createAdsDto) {
         Ads createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
-        Ads newCreatedAds = adsRepository.save(createdAds);
+        createdAds = adsRepository.save(createdAds);
 
         try {
-            AdsImage newImage = adsImageServiceImpl.addImage(newCreatedAds.getId(), image);
+            AdsImage newImage = adsImageServiceImpl.addImage(createdAds.getId(), image);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

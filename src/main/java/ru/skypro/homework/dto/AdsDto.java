@@ -9,7 +9,7 @@ public class AdsDto {
 
     private Integer author;
 
-    private List<String> image;
+    private List<ImageDto> image;
 
     private Integer pk;
 
