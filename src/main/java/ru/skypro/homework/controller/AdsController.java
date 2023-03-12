@@ -28,13 +28,13 @@ public class AdsController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> addAds(MultipartFile image, @RequestBody CreateAds ads) {
+    public ResponseEntity<AdsDto> addAds(@RequestParam MultipartFile image, CreateAds ads) {
         return ResponseEntity.ok(adsService.createAds(image, ads));
     }
 
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAds> getAdsMe() {
-        return ResponseEntity.ok(new ResponseWrapperAds());
+        return ResponseEntity.ok(adsService.getAllAds());
     }
 
     @GetMapping(params = {"search"})

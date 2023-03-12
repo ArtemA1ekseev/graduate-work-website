@@ -55,13 +55,13 @@ public class UserServiceImpl implements UserService {
     }
     /**
      * Method to get User by ID/Метод получения пользователя по ID
-     * @param id ID пользователя
+     * @param userName userName пользователя
      * @return userMapper.usersEntityToUserDto(users)
      * @throws UserNotFoundException Пользователь не найден
      */
     @Override
-    public UserDto getUser(Integer id) {
-        Users users = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    public UserDto getUser(String userName) {
+        Users users = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
         return userMapper.usersEntityToUserDto(users);
     }
 }

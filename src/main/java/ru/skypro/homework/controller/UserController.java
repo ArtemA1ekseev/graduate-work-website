@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapperUser> getUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<UserDto> getUser() {
+        return ResponseEntity.ok(userService.getUser("user@gmail.com"));
     }
 
     @PatchMapping("/me")
@@ -33,8 +33,4 @@ public class UserController {
         return ResponseEntity.ok(newPassword);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("id") int id) {
-        return ResponseEntity.ok(userService.getUser(id));
-    }
 }

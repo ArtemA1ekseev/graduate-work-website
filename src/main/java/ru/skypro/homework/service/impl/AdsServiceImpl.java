@@ -60,12 +60,12 @@ public class AdsServiceImpl implements AdsService {
         createdAds = adsRepository.save(createdAds);
 
         try {
-            AdsImage newImage = adsImageServiceImpl.addImage(createdAds.getId(), image);
+           AdsImage newImage = adsImageServiceImpl.addImage(createdAds.getId(), image);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return adsMapper.advertEntityToAdsDto(createdAds);
+        return adsMapper.advertEntityToAdsDto(adsRepository.getById(createdAds.getId()));
     }
 
     @Override

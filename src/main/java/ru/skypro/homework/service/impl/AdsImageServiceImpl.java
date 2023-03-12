@@ -33,7 +33,7 @@ public class AdsImageServiceImpl implements AdsImageService {
 
     public AdsImage addImage(Integer adsId, MultipartFile imageFile) throws IOException {
         Ads ads = adsRepository.findById(adsId).get();
-        Path path = Path.of(imageDir,ads + "." + getExtensions(imageFile.getOriginalFilename()));
+        Path path = Path.of(imageDir,imageFile.getOriginalFilename());
         if (!Files.exists(path.getParent())) {
             Files.createDirectory(path.getParent());
         }

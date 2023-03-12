@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ImageMapper {
 
-    @Mapping(source = "mediaType", target = "image")
+    @Mapping(source = "path", target = "image")
     ImageDto ImageToImageDto(AdsImage adsImage);
 
     List<ImageDto> ImagesToImagesDto(List<AdsImage> adsImages);
