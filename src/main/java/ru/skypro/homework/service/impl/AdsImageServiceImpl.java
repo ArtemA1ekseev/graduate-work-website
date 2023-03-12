@@ -31,7 +31,7 @@ public class AdsImageServiceImpl implements AdsImageService {
         this.adsRepository = adsRepository;
     }
 
-    public void addImage(int adsId, MultipartFile imageFile) throws IOException {
+    public AdsImage addImage(Integer adsId, MultipartFile imageFile) throws IOException {
         Ads ads = adsRepository.findById(adsId).get();
         Path path = Path.of(imageDir,ads + "." + getExtensions(imageFile.getOriginalFilename()));
         if (!Files.exists(path.getParent())) {
@@ -53,6 +53,7 @@ public class AdsImageServiceImpl implements AdsImageService {
         image.setData(imageFile.getBytes());
         image.setAds(ads);
         imageRepository.save(image);
+        return image;
     }
 
     private String getExtensions(String fileName) {

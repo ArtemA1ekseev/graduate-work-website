@@ -1,12 +1,14 @@
 package ru.skypro.homework.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.CommentService;
 
-@CrossOrigin(value = "http://localhost:3000")
+@CrossOrigin(value = {"http://localhost:3000", "http://adc:3000"})
 @RestController
 @RequestMapping("/ads")
 public class AdsController {
@@ -25,9 +27,9 @@ public class AdsController {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
-    @PostMapping
-    public ResponseEntity<AdsDto> addAds(@RequestBody CreateAds ads) {
-        return ResponseEntity.ok(adsService.createAds(ads));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AdsDto> addAds(MultipartFile image, @RequestBody CreateAds ads) {
+        return ResponseEntity.ok(adsService.createAds(image, ads));
     }
 
     @GetMapping("/me")
@@ -52,8 +54,8 @@ public class AdsController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<AdsDto> updateAds(@PathVariable int id, @RequestBody AdsDto adsDto) {
-        return ResponseEntity.ok(adsService.updateAdvert(id, adsDto));
+    public ResponseEntity<AdsDto> updateAds(@PathVariable int id, @RequestBody CreateAds createAds) {
+        return ResponseEntity.ok(adsService.updateAdvert(id, createAds));
     }
 
     @GetMapping("{ad_pk}/comment")

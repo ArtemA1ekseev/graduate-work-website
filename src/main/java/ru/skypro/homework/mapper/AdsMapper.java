@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdsMapper {
 
-    @Mapping(source = "pk", target = "id")
     Ads createAdsDtoToAdvertEntity(CreateAds createAdsDto);
 
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "users.id", target = "author")
+    //@Mapping(source = "image.", target = "image")
     AdsDto advertEntityToAdsDto(Ads ads);
 
     @Mapping(source = "users.firstName", target = "authorFirstName")

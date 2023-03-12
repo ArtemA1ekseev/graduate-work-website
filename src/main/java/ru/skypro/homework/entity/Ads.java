@@ -26,8 +26,10 @@ public class Ads {
     private String title;
     /** "description/описание" field */
     private String description;
-    /** "image/изображение" field */
-    private String image;
+
+    /** "image/Список картинок" field */
+    @OneToMany(mappedBy = "ads")
+    private List<AdsImage> image;
     /** "users/пользователь" field */
     @ManyToOne
     private Users users;

@@ -1,11 +1,13 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
 import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.entity.Ads;
+import ru.skypro.homework.entity.AdsImage;
 import ru.skypro.homework.exception.AdvertNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdsMapper;
@@ -13,9 +15,11 @@ import ru.skypro.homework.repository.AdsCommentRepository;
 import ru.skypro.homework.repository.AdsImageRepository;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AdsImageService;
 import ru.skypro.homework.service.AdsService;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +30,16 @@ public class AdsServiceImpl implements AdsService {
     private final AdsRepository adsRepository;
     private final UserRepository userRepository;
     private final AdsCommentRepository commentRepository;
+    private final AdsImageServiceImpl adsImageServiceImpl;
+
     private final AdsImageRepository imageRepository;
     private final AdsMapper adsMapper;
 
-    public AdsServiceImpl(AdsRepository adsRepository, UserRepository userRepository, AdsCommentRepository commentRepository, AdsImageRepository imageRepository, AdsMapper adsMapper) {
+    public AdsServiceImpl(AdsRepository adsRepository, UserRepository userRepository, AdsCommentRepository commentRepository, AdsImageServiceImpl adsImageServiceImpl, AdsImageRepository imageRepository, AdsMapper adsMapper) {
         this.adsRepository = adsRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.adsImageServiceImpl = adsImageServiceImpl;
         this.imageRepository = imageRepository;
         this.adsMapper = adsMapper;
     }
@@ -48,9 +55,16 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public AdsDto createAds(CreateAds createAdsDto) {
+    public AdsDto createAds(MultipartFile image, CreateAds createAdsDto) {
         Ads createdAds = adsMapper.createAdsDtoToAdvertEntity(createAdsDto);
-        adsRepository.save(createdAds);
+        Ads newCreatedAds = adsRepository.save(createdAds);
+
+        try {
+            AdsImage newImage = adsImageServiceImpl.addImage(newCreatedAds.getId(), image);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return adsMapper.advertEntityToAdsDto(createdAds);
     }
 
@@ -69,14 +83,14 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public AdsDto updateAdvert(Integer id, AdsDto adsDto) {
+    public AdsDto updateAdvert(Integer id, CreateAds createAds) {
         Ads ads = adsRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
-        ads.setUsers(userRepository.findById(adsDto.getAuthor()).orElseThrow(UserNotFoundException::new));
-        ads.setImage(adsDto.getImage());
-        ads.setPrice(adsDto.getPrice());
-        ads.setTitle(adsDto.getTitle());
+        ads.setDescription(createAds.getDescription());
+        ads.setPrice(createAds.getPrice());
+        ads.setTitle(createAds.getTitle());
         adsRepository.save(ads);
-        return adsDto;
+
+        return adsMapper.advertEntityToAdsDto(ads);
     }
 
     @Override

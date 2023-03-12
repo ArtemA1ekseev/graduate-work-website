@@ -1,5 +1,6 @@
 package ru.skypro.homework.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAds;
 import ru.skypro.homework.dto.FullAds;
@@ -11,13 +12,13 @@ public interface AdsService {
 
     ResponseWrapperAds getAllAds();
 
-    AdsDto createAds(CreateAds createAdsDto);
+    AdsDto createAds (MultipartFile image, CreateAds createAdsDto) ;
 
     FullAds getAds(Integer id);
 
     void removeAds(Integer id);
 
-    AdsDto updateAdvert(Integer id, AdsDto adsDto);
+    AdsDto updateAdvert(Integer id, CreateAds createAds);
 
     ResponseWrapperAds findAds(String search);
 }

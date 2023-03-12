@@ -2,12 +2,14 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AdsDto {
 
     private Integer author;
 
-    private String image;
+    private List<String> image;
 
     private Integer pk;
 

@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/image")
-@CrossOrigin(value = "http://localhost:3000")
+@CrossOrigin(value = {"http://localhost:3000", "http://adc:3000"})
 public class ImageController {
 
     private AdsImageServiceImpl imageService;
