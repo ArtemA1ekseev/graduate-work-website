@@ -11,11 +11,10 @@ public interface AdsCommentMapper extends WebMapper<AdsCommentDto, AdsComment> {
     @Override
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "id", source = "pk")
+ // @Mapping(target = "id", source = "pk")
     AdsComment toEntity(AdsCommentDto dto);
 
     @Override
-    @Mapping(target = "pk", source = "id")
     @Mapping(target = "author", source = "author.id")
     @Mapping(target = "createdAt", source = "entity.createdAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
     AdsCommentDto toDto(AdsComment entity);

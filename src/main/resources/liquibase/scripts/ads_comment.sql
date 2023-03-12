@@ -4,9 +4,9 @@
 
 CREATE TABLE IF NOT EXISTS ads_comment
 (
-    pk         BIGSERIAL PRIMARY KEY,
+    id         BIGSERIAL PRIMARY KEY,
     author_id  integer REFERENCES users (id),
     created_at timestamp,
     text       text,
-    ads_pk     integer REFERENCES ads (pk)
+    ads_pk     integer REFERENCES ads (id)
 );

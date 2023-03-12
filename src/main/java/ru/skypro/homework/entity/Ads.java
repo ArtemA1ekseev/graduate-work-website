@@ -14,17 +14,16 @@ public class Ads {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk")
     private long id;
 
     @ManyToOne
     private User author;
-
-    private String image;
 
     private int price;
 
     private String title;
 
     private String description;
+
+    private String image;
 }

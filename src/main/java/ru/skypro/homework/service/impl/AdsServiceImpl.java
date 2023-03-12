@@ -36,6 +36,7 @@ public class AdsServiceImpl implements AdsService {
     public Ads createAds(Ads ads) {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
+
         ads.setAuthor(user);
         return adsRepository.save(ads);
     }
@@ -55,16 +56,12 @@ public class AdsServiceImpl implements AdsService {
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-
         if(ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")){
-
             List<Long> adsComments = adsCommentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(AdsComment::getId)
                     .collect(Collectors.toList());
-
             adsCommentRepository.deleteAllById(adsComments);
-
             adsRepository.delete(ads);
             return true;
         }
@@ -73,15 +70,12 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public Ads updateAds(long id, Ads updatedAdsDto, Authentication authentication) {
-
         Ads ads = adsRepository.findById(id).orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));
-
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-
         if(ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")){
             updatedAdsDto.setAuthor(ads.getAuthor());
             updatedAdsDto.setId(ads.getId());
-            updatedAdsDto.setDescription(ads.getDescription());
+//            updatedAdsDto.setDescription(ads.getDescription());
             return adsRepository.save(updatedAdsDto);
         }
         return updatedAdsDto;
@@ -91,6 +85,7 @@ public class AdsServiceImpl implements AdsService {
     public Collection<Ads> getAdsMe() {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
+
         return adsRepository.findAll().stream()
                 .filter(ads -> ads.getAuthor().equals(user)).collect(Collectors.toList());
     }
@@ -103,70 +98,51 @@ public class AdsServiceImpl implements AdsService {
         adsComment.setAds(adsRepository.findById(ad_pk).orElseThrow());
         adsComment.setCreatedAt(LocalDateTime.now());
         return adsCommentRepository.save(adsComment);
-
     }
 
     @Override
     public Collection<AdsComment> getAdsComments(long ad_pk) {
-
         return adsCommentRepository.findAll().stream().filter(adsComment -> adsComment.getAds().getId() == ad_pk)
                 .collect(Collectors.toList());
-
     }
 
     @Override
     public AdsComment getAdsComment(long ad_pk, long id) {
-
         AdsComment adsComment = adsCommentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + id + " не найден!"));
-
         if (adsComment.getAds().getId() != ad_pk){
             throw new NotFoundException("Комментарий с id " + id + " не принадлежит объявлению с id " + ad_pk);
         }
-
         return adsComment;
     }
 
     @Override
     public boolean deleteAdsComment(long ad_pk, long id, Authentication authentication) {
-
         AdsComment adsComment = adsCommentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + id + " не найден!"));
-
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-
         if(adsComment.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")){
-
             if (adsComment.getAds().getId() != ad_pk){
                 throw new NotFoundException("Комментарий с id " + id + " не принадлежит объявлению с id " + ad_pk);
             }
-
             adsCommentRepository.delete(adsComment);
             return true;
         }
-
         return false;
     }
 
     @Override
     public AdsComment updateAdsComment(long ad_pk, long id, AdsComment updatedAdsComment, Authentication authentication) {
-
         AdsComment updateAdsComment = adsCommentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + id + " не найден!"));
-
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-
         if(updateAdsComment.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")){
-
             if (updateAdsComment.getAds().getId() != ad_pk){
                 throw new NotFoundException("Комментарий с id " + id + " не принадлежит объявлению с id " + ad_pk);
             }
             updateAdsComment.setText(updatedAdsComment.getText());
             return adsCommentRepository.save(updateAdsComment);
-
         }
-
         return updateAdsComment;
-
     }
 }

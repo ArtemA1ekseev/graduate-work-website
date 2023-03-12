@@ -12,16 +12,16 @@ public interface AdsMapper extends WebMapper<AdsDto, Ads> {
 
     @Override
     @Mapping(target = "author.id", source = "author")
-    @Mapping(target = "id", source = "pk")
     Ads toEntity(AdsDto dto);
+
     @Override
     @Mapping(target = "author", source = "author.id")
-    @Mapping(target = "pk", source = "id")
     AdsDto toDto(Ads entity);
+
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "id", source = "pk")
     Ads toEntity(CreateAdsDto dto);
-    @Mapping(target = "pk", source = "id")
+
     CreateAdsDto createAdsToDto(Ads entity);
 
     @Mapping(target = "authorFirstName", source = "author.firstName")
