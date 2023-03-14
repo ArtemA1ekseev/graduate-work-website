@@ -1,6 +1,7 @@
 package ru.skypro.homework.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -18,11 +19,14 @@ public class Images {
     private Long id;
 
     @Lob
+    @Type(type = "binary")
     private byte[] image;
 
     private String filePath;
 
     private long fileSize;
+
+    private String mediaType;
 
     @OneToOne
     private Ads ads;

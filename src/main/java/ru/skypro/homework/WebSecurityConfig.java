@@ -21,7 +21,8 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/login",
             "/register",
-            "/ads"
+            "/ads",
+            "/ads/images/**"
     };
 
     @Bean
@@ -35,7 +36,6 @@ public class WebSecurityConfig {
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
                                 .mvcMatchers("/ads/**", "/users/**").authenticated()
                 )
-                .cors().disable()
                 .httpBasic(withDefaults())
                 .build();
     }

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class AdsCommentDto {
 
-    private int id;
+    private int pk;
 
     private int author;
 

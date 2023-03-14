@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS ads_comment
     author_id  integer REFERENCES users (id),
     created_at timestamp,
     text       text,
-    ads_pk     integer REFERENCES ads (id)
+    ads_id integer REFERENCES ads (id)
 );

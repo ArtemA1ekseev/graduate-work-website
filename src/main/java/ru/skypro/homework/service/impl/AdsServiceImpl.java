@@ -11,7 +11,6 @@ import ru.skypro.homework.repository.AdsCommentRepository;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -36,13 +35,12 @@ public class AdsServiceImpl implements AdsService {
     public Ads createAds(Ads ads) {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-
         ads.setAuthor(user);
         return adsRepository.save(ads);
     }
 
     @Override
-    public Ads getFullAds(long id) {
+    public Ads getAds(long id) {
         return adsRepository.findById(id).orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));
     }
 
@@ -75,7 +73,7 @@ public class AdsServiceImpl implements AdsService {
         if(ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")){
             updatedAdsDto.setAuthor(ads.getAuthor());
             updatedAdsDto.setId(ads.getId());
-//            updatedAdsDto.setDescription(ads.getDescription());
+//          updatedAdsDto.setDescription(ads.getDescription());
             return adsRepository.save(updatedAdsDto);
         }
         return updatedAdsDto;
@@ -85,7 +83,6 @@ public class AdsServiceImpl implements AdsService {
     public Collection<Ads> getAdsMe() {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-
         return adsRepository.findAll().stream()
                 .filter(ads -> ads.getAuthor().equals(user)).collect(Collectors.toList());
     }
