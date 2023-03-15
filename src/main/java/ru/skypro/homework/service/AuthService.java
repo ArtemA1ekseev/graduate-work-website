@@ -1,9 +1,10 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.dto.RegReq;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.User;
 
 public interface AuthService {
+
     boolean login(String userName, String password);
-    boolean register(RegReq regReq, Role role);
+
+    boolean register(User user);
 }

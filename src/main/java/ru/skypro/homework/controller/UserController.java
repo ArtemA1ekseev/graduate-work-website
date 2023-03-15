@@ -1,35 +1,80 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.ResponseWrapperUser;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.service.UserService;
 
-@RestController
+import java.util.Collection;
+
+@EnableMethodSecurity
 @CrossOrigin(value = "http://localhost:3000")
+@RestController
 @RequestMapping("/users")
+@Tag(name = "Пользователи", description = "UserController")
 public class UserController {
- UserService userService;
-    @PatchMapping("/me")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(user));
+
+    private final UserService userService;
+
+    private final UserMapper mapper;
+
+    public UserController(UserService userService, UserMapper mapper) {
+        this.userService = userService;
+        this.mapper = mapper;
     }
 
-    @PatchMapping("/me/image")
-    public ResponseEntity<UserDto> updateUserImage(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userDto);
+    @Operation(summary = "addUser", description = "addUser")
+    @PostMapping
+    public ResponseEntity<CreateUserDto> addUser(@RequestBody CreateUserDto createUserDto) {
+        User user = userService.createUser(mapper.createUserDtoToEntity(createUserDto));
+        return ResponseEntity.ok(mapper.toCreateUserDto(user));
     }
 
+    @Operation(summary = "getUsers", description = "getUsers")
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapperUser> getUsers() {
-        return ResponseEntity.ok(new ResponseWrapperUser());
+    public ResponseWrapper<UserDto> getUsers() {
+        Collection<User> users = userService.getUsers();
+        return ResponseWrapper.of(mapper.toDto(users));
     }
 
+    @Operation(summary = "updateUser", description = "updateUser")
+    @PatchMapping("/me")
+    public UserDto update(@RequestBody UserDto userDto) {
+        User user = mapper.toEntity(userDto);
+        return mapper.toDto(userService.update(user));
+    }
+
+    @Operation(summary = "setPassword", description = "setPassword")
     @PostMapping("/set_password")
-    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
-        return ResponseEntity.ok(newPassword);
+    public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPasswordDto) {
+        if(userService.newPassword(newPasswordDto.getNewPassword(),  newPasswordDto.getCurrentPassword())){
+            return ResponseEntity.ok(newPasswordDto);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @Operation(summary = "getUser", description = "getUser")
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable long id) {
+        User user = userService.getUserById(id);
+
+        return ResponseEntity.ok(mapper.toDto(user));
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("{id}/updateRole")
+    public ResponseEntity<UserDto> updateRoleUser(@PathVariable long id, Role role){
+
+        UserDto userDto = mapper.toDto(userService.updateRoleUser(id, role));
+
+        return ResponseEntity.ok(userDto);
+
     }
 }

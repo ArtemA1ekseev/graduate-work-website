@@ -1,50 +1,52 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.security.core.userdetails.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.RegReq;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.User;
+import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserDetailsManager manager;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(UserDetailsManager manager) {
-        this.manager = manager;
-        this.encoder = new BCryptPasswordEncoder();
+    private final UserRepository userRepository;
+
+    @Autowired
+    public AuthServiceImpl(UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder,
+                           UserRepository userRepository) {
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public boolean login(String userName, String password) {
-        if (!manager.userExists(userName)) {
+    public boolean login(String username, String password) {
+        if (!userRepository.existsByEmail(username)) {
             return false;
         }
-        UserDetails userDetails = manager.loadUserByUsername(userName);
-        String encryptedPassword = userDetails.getPassword();
-        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
-        return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        return passwordEncoder.matches(password, userDetails.getPassword());
     }
 
     @Override
-    public boolean register(RegReq regReq, Role role) {
-        if (manager.userExists(regReq.getUsername())) {
+    public boolean register(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             return false;
         }
-        manager.createUser(
-                User.withDefaultPasswordEncoder()
-                        .password(regReq.getPassword())
-                        .username(regReq.getUsername())
-                        .roles(role.name())
-                        .build()
-        );
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(user);
+
         return true;
     }
 }

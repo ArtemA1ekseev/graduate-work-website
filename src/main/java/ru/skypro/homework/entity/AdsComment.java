@@ -1,19 +1,29 @@
 package ru.skypro.homework.entity;
 
-import lombok.Data;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import lombok.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
 @Entity
+@Table(name = "ads_comment")
+@NoArgsConstructor
+@EqualsAndHashCode
+@AllArgsConstructor
+@Getter
+@Setter
 public class AdsComment {
+
     @Id
-    @GeneratedValue
-    private int pk;
-    private int author;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @ManyToOne
+    private User author;
+
     private LocalDateTime createdAt;
+
     private String text;
+
+    @ManyToOne
+    private Ads ads;
 }
