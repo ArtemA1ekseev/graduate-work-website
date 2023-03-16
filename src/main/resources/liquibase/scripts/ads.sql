@@ -10,8 +10,3 @@ CREATE TABLE IF NOT EXISTS ads
     title       varchar,
     description text NOT NULL
 );
-
--- changeset aalekseev:2
-
-ALTER TABLE ads
-    ADD COLUMN image_id integer REFERENCES images (id);
