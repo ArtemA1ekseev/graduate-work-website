@@ -9,25 +9,31 @@ import ru.skypro.homework.entity.AdsComment;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.AdsCommentRepository;
 import ru.skypro.homework.repository.AdsRepository;
+import ru.skypro.homework.repository.ImagesRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
+
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class AdsServiceImpl implements AdsService {
 
     private final AdsRepository adsRepository;
 
     private final AdsCommentRepository adsCommentRepository;
 
+    private final ImagesRepository imagesRepository;
     private final UserRepository userRepository;
 
-    public AdsServiceImpl(AdsRepository adsRepository, AdsCommentRepository adsCommentRepository, UserRepository userRepository) {
+    public AdsServiceImpl(AdsRepository adsRepository, AdsCommentRepository adsCommentRepository, ImagesRepository imagesRepository, UserRepository userRepository) {
         this.adsRepository = adsRepository;
         this.adsCommentRepository = adsCommentRepository;
+        this.imagesRepository = imagesRepository;
         this.userRepository = userRepository;
     }
 
@@ -60,6 +66,7 @@ public class AdsServiceImpl implements AdsService {
                     .map(AdsComment::getId)
                     .collect(Collectors.toList());
             adsCommentRepository.deleteAllById(adsComments);
+            imagesRepository.deleteAllByAdsId(id);
             adsRepository.delete(ads);
             return true;
         }
