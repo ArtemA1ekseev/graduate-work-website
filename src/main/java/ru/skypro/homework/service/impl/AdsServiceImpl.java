@@ -68,7 +68,7 @@ public class AdsServiceImpl implements AdsService {
         }
         return false;
     }
-  
+
     @Override
     public Ads updateAds(long id, Ads updatedAdsDto, Authentication authentication) {
         Ads ads = adsRepository.findById(id).orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));
