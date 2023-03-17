@@ -1,9 +1,7 @@
 package ru.skypro.homework.entity;
 
 import lombok.*;
-
 import javax.persistence.*;
-
 
 @Entity
 @Table(name = "ads")
@@ -13,7 +11,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Ads {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -27,6 +24,6 @@ public class Ads {
 
     private String description;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private Images image;
 }

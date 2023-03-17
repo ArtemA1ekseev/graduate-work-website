@@ -2,20 +2,21 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.dto.CreateUserDto;
+import ru.skypro.homework.dto.NewPasswordDto;
+import ru.skypro.homework.dto.ResponseWrapper;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.service.UserService;
-
 import java.util.Collection;
 
-@EnableMethodSecurity
 @CrossOrigin(value = "http://localhost:3000")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
 @Tag(name = "Пользователи", description = "UserController")
@@ -24,11 +25,6 @@ public class UserController {
     private final UserService userService;
 
     private final UserMapper mapper;
-
-    public UserController(UserService userService, UserMapper mapper) {
-        this.userService = userService;
-        this.mapper = mapper;
-    }
 
     @Operation(summary = "addUser", description = "addUser")
     @PostMapping
@@ -54,9 +50,11 @@ public class UserController {
     @Operation(summary = "setPassword", description = "setPassword")
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPasswordDto) {
-        if(userService.newPassword(newPasswordDto.getNewPassword(),  newPasswordDto.getCurrentPassword())){
+
+        if (userService.newPassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword())) {
             return ResponseEntity.ok(newPasswordDto);
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
@@ -64,17 +62,6 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable long id) {
         User user = userService.getUserById(id);
-
         return ResponseEntity.ok(mapper.toDto(user));
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("{id}/updateRole")
-    public ResponseEntity<UserDto> updateRoleUser(@PathVariable long id, Role role){
-
-        UserDto userDto = mapper.toDto(userService.updateRoleUser(id, role));
-
-        return ResponseEntity.ok(userDto);
-
     }
 }
