@@ -2,15 +2,19 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
+import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.entity.Ads;
 import ru.skypro.homework.entity.Images;
+import ru.skypro.homework.entity.User;
+import ru.skypro.homework.mapper.AdsMapper;
+import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImagesRepository;
-import ru.skypro.homework.service.AdsService;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImagesService;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +31,11 @@ public class ImagesServiceImpl implements ImagesService {
 
     private final ImagesRepository imagesRepository;
 
-    private final AdsService adsService;
+    private final AdsRepository adsRepository;
+
+    private final UserRepository userRepository;
+
+    private final AdsMapper adsMapper;
 
     @Override
     public Images uploadImage(MultipartFile imageFile, Ads ads) throws IOException {
@@ -47,8 +55,33 @@ public class ImagesServiceImpl implements ImagesService {
         images.setFileSize(imageFile.getSize());
         images.setMediaType(imageFile.getContentType());
         images.setImage(imageFile.getBytes());
-        images.setAds(adsService.getAds(ads.getId()));
+        images.setAds(ads);
         return imagesRepository.save(images);
+    }
+
+    @Override
+    public AdsDto updateImage(MultipartFile imageFile, Authentication authentication, long adsId) throws IOException {
+        Ads ads = adsRepository.findById(adsId).orElseThrow(() -> new NotFoundException("Объявление с id " + adsId + " не найдено!"));
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        if (ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+            Images updatedImage = imagesRepository.findAllByAdsId(adsId);
+            Path filePath = Path.of(updatedImage.getFilePath());
+            Files.deleteIfExists(filePath);
+            try (
+                    InputStream is = imageFile.getInputStream();
+                    OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                    BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                    BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+            ) {
+                bis.transferTo(bos);
+            }
+            updatedImage.setFileSize(imageFile.getSize());
+            updatedImage.setMediaType(imageFile.getContentType());
+            updatedImage.setImage(imageFile.getBytes());
+            ads.setImage(imagesRepository.save(updatedImage));
+            adsRepository.save(ads);
+        }
+        return adsMapper.toDto(ads);
     }
 
     private String getExtensions(String fileName) {
@@ -62,11 +95,17 @@ public class ImagesServiceImpl implements ImagesService {
     }
 
     @Override
-    public void removeImage(long id){
+    public byte[] getImageBytesArray(long id) {
         Images images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
+        return images.getImage();
+    }
 
+    @Override
+    public void removeImage(long id) throws IOException{
+        Images images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
+        Path filePath = Path.of(images.getFilePath());
         images.getAds().setImage(null);
-
         imagesRepository.deleteById(id);
+        Files.deleteIfExists(filePath);
     }
 }

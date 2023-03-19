@@ -1,7 +1,8 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.entity.User;
-import java.util.Collection;
+import ru.skypro.homework.dto.CreateUserDto;
+import ru.skypro.homework.dto.UserDto;
+import java.util.List;
 
 /**
  * Сервис для работы с пользователем
@@ -10,17 +11,17 @@ public interface UserService {
 
     /**
      * Создание пользователя
-     * @param user Объект пользователя
+     * @param createUserDto Объект пользователя для передачи данных
      * @return User Созданный пользователь
      */
-    User createUser(User user);
+    UserDto createUser(CreateUserDto createUserDto);
 
     /**
      * Получение всех существующих пользователей
      *
      * @return Collection<User>
      */
-    Collection<User> getUsers();
+    List<UserDto> getUsers();
 
     /**
      * Изменение пользователя
@@ -28,14 +29,14 @@ public interface UserService {
      * @param user Объект пользователя с новыми данными
      * @return User Изменённый пользователь
      */
-    User update(User user);
+    UserDto update(UserDto user);
 
     /**
      * Получение пользователя по ID
      * @param id ID пользователя
      * @return User с данным ID
      */
-    User getUserById(long id);
+    UserDto getUserById(long id);
 
     /**
      * Изменение пароля пользователя

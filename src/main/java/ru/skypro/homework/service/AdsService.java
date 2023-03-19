@@ -1,11 +1,15 @@
 package ru.skypro.homework.service;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.AdsCommentDto;
+import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.dto.CreateAdsDto;
+import ru.skypro.homework.dto.FullAdsDto;
 import ru.skypro.homework.entity.Ads;
-import ru.skypro.homework.entity.AdsComment;
-import ru.skypro.homework.entity.Images;
 
-import java.util.Collection;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Сервис для работы с объявлениями
@@ -15,10 +19,11 @@ public interface AdsService {
     /**
      * Добавление объявления
      *
-     * @param ads Объект объявления
+     * @param createAdsDto Объект объявления
+     * @param imageFile Картинка объявления
      * @return Ads
      */
-    Ads createAds(Ads ads);
+    AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile imageFile) throws IOException;
 
     /**
      * Получение объявления по ID
@@ -29,11 +34,16 @@ public interface AdsService {
     Ads getAds(long id);
 
     /**
+     *
+     */
+    FullAdsDto getFullAdsDto(long id);
+
+    /**
      * Получение всех объявлений
      *
      * @return Collection<Ads>
      */
-    Collection<Ads> getAllAds();
+    List<AdsDto> getAllAds();
 
     /**
      * Удаление объявления по ID
@@ -42,7 +52,7 @@ public interface AdsService {
      * @param authentication Аутентифицированный пользователь
      * @return Возвращает true если объявление удалено, иначе false.
      */
-    boolean removeAds(long id, Authentication authentication);
+    boolean removeAds(long id, Authentication authentication) throws IOException;
 
     /**
      * Изменение объявления по ID
@@ -52,23 +62,23 @@ public interface AdsService {
      * @param authentication Аутентифицированный пользователь
      * @return Ads Изменённое объявление.
      */
-    Ads updateAds(long id, Ads updatedAdsDto, Authentication authentication);
+    AdsDto updateAds(long id, AdsDto updatedAdsDto, Authentication authentication);
 
     /**
      * Получение всех объявлений аутентифицированного пользователя
      *
      * @return Collection<Ads>
      */
-    Collection<Ads> getAdsMe();
+    List<AdsDto> getAdsMe();
 
     /**
      * Добавление комментария к объявлению
      *
      * @param adKey      ID объявления
-     * @param adsComment Объект комментария
+     * @param adsCommentDto Объект комментария
      * @return AdsComment
      */
-    AdsComment addAdsComment(long adKey, AdsComment adsComment);
+    AdsCommentDto addAdsComment(long adKey, AdsCommentDto adsCommentDto);
 
     /**
      * Получение всех комментариев определённого объявления
@@ -76,7 +86,7 @@ public interface AdsService {
      * @param adKey ID объявления
      * @return Collection<AdsComment>
      */
-    Collection<AdsComment> getAdsComments(long adKey);
+    List<AdsCommentDto> getAdsComments(long adKey);
 
     /**
      * Получение комментария по ID
@@ -85,7 +95,7 @@ public interface AdsService {
      * @param adKey ID объявления
      * @return AdsComment
      */
-    AdsComment getAdsComment(long adKey, long id);
+    AdsCommentDto getAdsComment(long adKey, long id);
 
     /**
      * Удаление комментария по ID
@@ -106,7 +116,5 @@ public interface AdsService {
      * @param authentication   Аутентифицированный пользователь
      * @return AdsComment Изменённый комментарий.
      */
-    AdsComment updateAdsComment(long adKey, long id, AdsComment updateAdsComment, Authentication authentication);
-
-    Ads updateAdsImage(Ads ads, Authentication authentication, Images image);
+    AdsCommentDto updateAdsComment(long adKey, long id, AdsCommentDto updateAdsComment, Authentication authentication);
 }
