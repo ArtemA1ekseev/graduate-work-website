@@ -5,5 +5,6 @@ import ru.skypro.homework.entity.Images;
 
 public interface ImagesRepository extends JpaRepository<Images, Long> {
 
+    Images findAllByAdsId(long adsId);
     void deleteAllByAdsId(long adsId);
 }
