@@ -2,19 +2,16 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
-import ru.skypro.homework.dto.CreateUserDto;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.UserService;
-import java.util.List;
 
+import java.util.Collection;
 
 import static ru.skypro.homework.dto.Role.USER;
 
@@ -28,45 +25,44 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final UserMapper userMapper;
-
     @Override
-    public UserDto createUser(CreateUserDto user) {
-        User createdUser = userMapper.createUserDtoToEntity(user);
-        if (createdUser.getRole() == null) {
-            createdUser.setRole(USER.name());
+    public User createUser(User user) {
+        User createUser = userRepository.findById(user.getId()).orElse(user);
+        if (createUser.getRole() == null) {
+            createUser.setRole(USER.name());
         }
-        return userMapper.toDto(userRepository.save(createdUser));
+
+        user.setPassword(passwordEncoder.encode(createUser.getPassword()));
+
+        return userRepository.save(createUser);
     }
 
     @Override
-    public List<UserDto> getUsers() {
-        return userMapper.toDto(userRepository.findAll());
+    public Collection<User> getUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public UserDto update(UserDto updatedUserDto) {
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
+    public User update(User user) {
+        User initialUser = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-            user.setFirstName(updatedUserDto.getFirstName());
-            user.setLastName(updatedUserDto.getLastName());
-            user.setPhone(updatedUserDto.getPhone());
-            userRepository.save(user);
-        return userMapper.toDto(user);
+        user.setId(initialUser.getId());
+        user.setEmail(initialUser.getEmail());
+        user.setPassword(initialUser.getPassword());
+        user.setRole(initialUser.getRole());
+        return userRepository.save(user);
     }
 
     @Override
-    public UserDto getUserById(long id) {
-        return userMapper.toDto(userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!")));
+    public User getUserById(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!"));
     }
 
     @Override
     public boolean newPassword(String newPassword, String currentPassword) {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-
-
         if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
@@ -74,5 +70,15 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public User updateRoleUser(long id, Role role) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!"));
+        user.setRole(role.name());
+        userRepository.save(user);
+        userDetailsService.loadUserByUsername(user.getEmail());
+        return user;
     }
 }
