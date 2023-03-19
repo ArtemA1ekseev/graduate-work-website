@@ -6,11 +6,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+import ru.skypro.homework.dto.CreateUserDto;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.UserService;
-import java.util.Collection;
+import java.util.List;
 
 
 import static ru.skypro.homework.dto.Role.USER;
@@ -25,36 +28,37 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserMapper userMapper;
+
     @Override
-    public User createUser(User user) {
-        User createUser = userRepository.findById(user.getId()).orElse(user);
-        if (createUser.getRole() == null) {
-            createUser.setRole(USER.name());
+    public UserDto createUser(CreateUserDto user) {
+        User createdUser = userMapper.createUserDtoToEntity(user);
+        if (createdUser.getRole() == null) {
+            createdUser.setRole(USER.name());
         }
-        return userRepository.save(createUser);
+        return userMapper.toDto(userRepository.save(createdUser));
     }
 
     @Override
-    public Collection<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getUsers() {
+        return userMapper.toDto(userRepository.findAll());
     }
 
     @Override
-    public User update(User user) {
-        User initialUser = userRepository.findByEmail(SecurityContextHolder.getContext()
+    public UserDto update(UserDto updatedUserDto) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-
-        user.setId(initialUser.getId());
-        user.setEmail(initialUser.getEmail());
-        user.setPassword(initialUser.getPassword());
-        user.setRole(initialUser.getRole());
-        return userRepository.save(user);
+            user.setFirstName(updatedUserDto.getFirstName());
+            user.setLastName(updatedUserDto.getLastName());
+            user.setPhone(updatedUserDto.getPhone());
+            userRepository.save(user);
+        return userMapper.toDto(user);
     }
 
     @Override
-    public User getUserById(long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!"));
+    public UserDto getUserById(long id) {
+        return userMapper.toDto(userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!")));
     }
 
     @Override

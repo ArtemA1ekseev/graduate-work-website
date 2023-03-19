@@ -9,7 +9,7 @@ public class UserDto {
 
     private String firstName;
 
-    private int id;
+    private long id;
 
     private String lastName;
 

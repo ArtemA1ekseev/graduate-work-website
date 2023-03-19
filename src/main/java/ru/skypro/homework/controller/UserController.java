@@ -10,10 +10,7 @@ import ru.skypro.homework.dto.CreateUserDto;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.ResponseWrapper;
 import ru.skypro.homework.dto.UserDto;
-import ru.skypro.homework.entity.User;
-import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.service.UserService;
-import java.util.Collection;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RequiredArgsConstructor
@@ -24,27 +21,22 @@ public class UserController {
 
     private final UserService userService;
 
-    private final UserMapper mapper;
-
     @Operation(summary = "addUser", description = "addUser")
     @PostMapping
-    public ResponseEntity<CreateUserDto> addUser(@RequestBody CreateUserDto createUserDto) {
-        User user = userService.createUser(mapper.createUserDtoToEntity(createUserDto));
-        return ResponseEntity.ok(mapper.toCreateUserDto(user));
+    public ResponseEntity<UserDto> addUser(@RequestBody CreateUserDto createUserDto) {
+        return ResponseEntity.ok(userService.createUser(createUserDto));
     }
 
     @Operation(summary = "getUsers", description = "getUsers")
     @GetMapping("/me")
     public ResponseWrapper<UserDto> getUsers() {
-        Collection<User> users = userService.getUsers();
-        return ResponseWrapper.of(mapper.toDto(users));
+        return ResponseWrapper.of(userService.getUsers());
     }
 
     @Operation(summary = "updateUser", description = "updateUser")
     @PatchMapping("/me")
     public UserDto update(@RequestBody UserDto userDto) {
-        User user = mapper.toEntity(userDto);
-        return mapper.toDto(userService.update(user));
+        return userService.update(userDto);
     }
 
     @Operation(summary = "setPassword", description = "setPassword")
@@ -61,7 +53,6 @@ public class UserController {
     @Operation(summary = "getUser", description = "getUser")
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable long id) {
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(mapper.toDto(user));
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 }
