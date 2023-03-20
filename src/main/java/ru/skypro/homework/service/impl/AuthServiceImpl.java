@@ -1,6 +1,6 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +9,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.AuthService;
 
+@RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -18,22 +19,12 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    public AuthServiceImpl(UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder,
-                           UserRepository userRepository) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-    }
-
     @Override
     public boolean login(String username, String password) {
         if (!userRepository.existsByEmail(username)) {
             return false;
         }
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
         return passwordEncoder.matches(password, userDetails.getPassword());
     }
 
@@ -42,11 +33,8 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByEmail(user.getEmail())) {
             return false;
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         userRepository.save(user);
-
         return true;
     }
 }

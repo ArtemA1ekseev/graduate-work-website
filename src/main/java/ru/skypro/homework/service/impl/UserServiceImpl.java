@@ -1,6 +1,6 @@
 package ru.skypro.homework.service.impl;
 
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,9 +10,12 @@ import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.UserService;
+
 import java.util.Collection;
 
 import static ru.skypro.homework.dto.Role.USER;
+
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -22,18 +25,15 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @Override
     public User createUser(User user) {
         User createUser = userRepository.findById(user.getId()).orElse(user);
         if (createUser.getRole() == null) {
             createUser.setRole(USER.name());
         }
+
+        user.setPassword(passwordEncoder.encode(createUser.getPassword()));
+
         return userRepository.save(createUser);
     }
 
@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService {
     public User update(User user) {
         User initialUser = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-//        User initialUser = userRepository.findById(user.getId()).orElse(user);
         user.setId(initialUser.getId());
         user.setEmail(initialUser.getEmail());
         user.setPassword(initialUser.getPassword());
@@ -64,28 +63,22 @@ public class UserServiceImpl implements UserService {
     public boolean newPassword(String newPassword, String currentPassword) {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
-        if(passwordEncoder.matches(currentPassword, user.getPassword())){
+        if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
             userDetailsService.loadUserByUsername(user.getEmail());
             return true;
         }
-
         return false;
     }
 
     @Override
     public User updateRoleUser(long id, Role role) {
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!"));
-
         user.setRole(role.name());
-
         userRepository.save(user);
-
         userDetailsService.loadUserByUsername(user.getEmail());
-
         return user;
     }
 }

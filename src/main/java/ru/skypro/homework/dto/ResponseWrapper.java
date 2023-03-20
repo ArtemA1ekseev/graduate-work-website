@@ -1,6 +1,7 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +19,6 @@ public class ResponseWrapper<D> {
         }
         rw.results = results;
         rw.count = results.size();
-
         return rw;
     }
 }
