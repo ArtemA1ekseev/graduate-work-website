@@ -1,50 +1,46 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.security.core.userdetails.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.RegReq;
-import ru.skypro.homework.dto.Role;
+import org.springframework.transaction.annotation.Transactional;
+import ru.skypro.homework.entity.User;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
 
+import javax.validation.ValidationException;
+
+@Transactional
+@RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserDetailsManager manager;
+    private final PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder encoder;
+    private final UserDetailsService userDetailsService;
 
-    public AuthServiceImpl(UserDetailsManager manager) {
-        this.manager = manager;
-        this.encoder = new BCryptPasswordEncoder();
+    private final UserRepository userRepository;
+
+    @Override
+    public void login(String username, String password) {
+        UserDetails user = userDetailsService.loadUserByUsername(username);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Неверно указан пароль!");
+        }
     }
 
     @Override
-    public boolean login(String userName, String password) {
-        if (!manager.userExists(userName)) {
-            return false;
+    public void register(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ValidationException(String.format("Пользователь \"%s\" уже зарегистрирован!", user.getEmail()));
         }
-        UserDetails userDetails = manager.loadUserByUsername(userName);
-        String encryptedPassword = userDetails.getPassword();
-        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
-        return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
-    }
 
-    @Override
-    public boolean register(RegReq regReq, Role role) {
-        if (manager.userExists(regReq.getUsername())) {
-            return false;
-        }
-        manager.createUser(
-                User.withDefaultPasswordEncoder()
-                        .password(regReq.getPassword())
-                        .username(regReq.getUsername())
-                        .roles(role.name())
-                        .build()
-        );
-        return true;
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(user);
     }
 }
