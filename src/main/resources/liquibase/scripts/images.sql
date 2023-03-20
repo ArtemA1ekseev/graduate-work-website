@@ -1,6 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset aalekseev:1
+
 CREATE TABLE IF NOT EXISTS image
 (
     id         BIGSERIAL PRIMARY KEY,

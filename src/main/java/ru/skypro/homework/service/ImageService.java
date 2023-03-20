@@ -25,5 +25,4 @@ public interface ImageService {
      * @return Images
      */
     Image getImageById(long id);
-
 }
