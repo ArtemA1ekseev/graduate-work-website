@@ -17,17 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import ru.skypro.homework.dto.AdsCommentDto;
-import ru.skypro.homework.dto.AdsDto;
-import ru.skypro.homework.dto.CreateAdsDto;
-import ru.skypro.homework.dto.FullAdsDto;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.Ads;
 import ru.skypro.homework.entity.AdsComment;
-import ru.skypro.homework.entity.Images;
+import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.mapper.AdsCommentMapper;
 import ru.skypro.homework.mapper.AdsMapper;
-import ru.skypro.homework.service.ImagesService;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.impl.AdsServiceImpl;
 
 import java.util.ArrayList;
@@ -60,7 +57,7 @@ class AdsControllerTest {
     private AdsCommentMapper adsCommentMapper;
 
     @MockBean
-    private ImagesService imagesService;
+    private ImageService imagesService;
 
     @InjectMocks
     private AdsController adsController;
@@ -75,15 +72,15 @@ class AdsControllerTest {
     @Test
     void getAllAds() throws Exception {
         User user1 = new User(1, "a@mail.ru", "123", "Amt", "Lom",
-                "+79123456789", "User");
+                "+79123456789", Role.USER);
 
         User user2 = new User(2, "b@mail.ru", "321", "Tma", "Mol",
-                "+79123456790", "User");
+                "+79123456790", Role.USER);
 
         byte[] imgStub = new byte[]{1, 0, 1};
         byte[] imgStub1 = new byte[]{0, 1, 0};
-        Images image = new Images();
-        Images image1 = new Images();
+        Image image = new Image();
+        Image image1 = new Image();
         image.setImage(imgStub);
         image1.setImage(imgStub1);
 
@@ -127,14 +124,15 @@ class AdsControllerTest {
     @Test
     @WithMockUser(authorities = "ADMIN")
     void addAds() throws Exception {
-        doReturn(new Images()).when(imagesService).uploadImage(any(), any());
+        doReturn(new Image()).when(imagesService).uploadImage(any());
         doReturn(new Ads()).when(adsService).createAds(any());
 
         byte[] imgStub = new byte[]{1, 0, 1};
         MockMultipartFile mockImage = new MockMultipartFile("image", imgStub);
 
         CreateAdsDto createAdsDto = new CreateAdsDto();
-        createAdsDto.setTitle("ads");
+        createAdsDto.setTitle("Название");
+        createAdsDto.setDescription("Описание");
 
         mockMvc.perform(multipart("/ads")
                         .file(mockImage)
@@ -179,21 +177,11 @@ class AdsControllerTest {
     @Test
     void removeAds() throws Exception {
 
-        when(adsService.removeAds(anyLong(), any())).thenReturn(true);
+        when(adsService.removeAdsById(anyLong())).thenReturn(new Ads());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/ads/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    void removeAdsThrows() throws Exception {
-
-        when(adsService.removeAds(anyLong(), any())).thenReturn(false);
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/ads/1"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -204,7 +192,7 @@ class AdsControllerTest {
 
         fullAdsDto.setEmail("d@mail.ru");
 
-        when(adsService.getAds(anyLong())).thenReturn(ads);
+        when(adsService.getAdsById(anyLong())).thenReturn(ads);
         when(adsMapper.toFullAdsDto(any(Ads.class))).thenReturn(fullAdsDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/ads/1"))
@@ -212,19 +200,19 @@ class AdsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("d@mail.ru"));
 
-        verify(adsService, times(1)).getAds(anyLong());
+        verify(adsService, times(1)).getAdsById(anyLong());
     }
 
     @Test
     void updateAdsImage() throws Exception {
         Ads adsStub = new Ads();
-        Images imageStub = new Images();
+        Image imageStub = new Image();
         imageStub.setId(1L);
         adsStub.setImage(imageStub);
 
-        when(adsService.getAds(anyLong())).thenReturn(adsStub);
-        when(imagesService.uploadImage(any(), any())).thenReturn(new Images());
-        when(adsService.updateAdsImage(any(), any(), any())).thenReturn(adsStub);
+        when(adsService.getAdsById(anyLong())).thenReturn(adsStub);
+        when(imagesService.uploadImage(any())).thenReturn(new Image());
+        when(adsService.updateAdsImage(any(), any())).thenReturn(adsStub);
 
         byte[] imgStub = new byte[]{1, 0, 1};
 
@@ -244,28 +232,22 @@ class AdsControllerTest {
     void updateAds() throws Exception {
         Ads ads = new Ads();
         AdsDto adsDto = new AdsDto();
-        AdsDto adsDto1 = new AdsDto();
-        adsDto1.setPk(2);
+        adsDto.setDescription("Описание");
+        adsDto.setTitle("Название");
+
 
         when(adsMapper.toEntity(any(AdsDto.class))).thenReturn(ads);
-        when(adsService.updateAds(anyLong(), any(Ads.class), any())).thenReturn(ads);
+        when(adsService.updateAds(any(Ads.class))).thenReturn(ads);
         when(adsMapper.toDto(any(Ads.class))).thenReturn(adsDto);
-
-        mockMvc.perform(MockMvcRequestBuilders.patch("/ads/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(adsDto1))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/ads/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(adsDto))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
 
-        verify(adsService, times(2)).updateAds(anyLong(), any(Ads.class), any());
+        verify(adsService, times(1)).updateAds(any(Ads.class));
     }
 
     @Test
@@ -304,6 +286,7 @@ class AdsControllerTest {
         AdsComment adsComment = new AdsComment();
 
         AdsCommentDto adsCommentDto = new AdsCommentDto();
+        adsCommentDto.setText("Комментарий");
 
         when(adsService.addAdsComment(anyLong(), any(AdsComment.class))).thenReturn(adsComment);
         when(adsCommentMapper.toDto(any(AdsComment.class))).thenReturn(adsCommentDto);
@@ -317,20 +300,9 @@ class AdsControllerTest {
     }
 
     @Test
-    void deleteAdsCommentThrows() throws Exception {
-
-        when(adsService.deleteAdsComment(anyLong(), anyLong(), any())).thenReturn(false);
-
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/ads/1/comments/1"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     void deleteAdsComment() throws Exception {
 
-        when(adsService.deleteAdsComment(anyLong(), anyLong(), any())).thenReturn(true);
+        when(adsService.deleteAdsComment(anyLong(), anyLong())).thenReturn(new AdsComment());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/ads/1/comments/1"))
                 .andDo(print())
@@ -360,9 +332,11 @@ class AdsControllerTest {
         AdsComment adsComment = new AdsComment();
         AdsCommentDto adsCommentDto2 = new AdsCommentDto();
         adsCommentDto2.setPk(3);
+        adsCommentDto.setText("Комментарий");
+        adsCommentDto2.setText("Комментарий");
 
 
-        when(adsService.updateAdsComment(anyLong(), anyLong(), any(AdsComment.class), any())).thenReturn(adsComment);
+        when(adsService.updateAdsComment(anyLong(), anyLong(), any(AdsComment.class))).thenReturn(adsComment);
         when(adsCommentMapper.toEntity(any(AdsCommentDto.class))).thenReturn(adsComment);
         when(adsCommentMapper.toDto(any(AdsComment.class))).thenReturn(adsCommentDto);
 
@@ -372,12 +346,5 @@ class AdsControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
-
-        mockMvc.perform(MockMvcRequestBuilders.patch("/ads/1/comment/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(adsCommentDto))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
     }
 }

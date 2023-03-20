@@ -3,8 +3,6 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +13,11 @@ import ru.skypro.homework.dto.RegisterReqDto;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.service.AuthService;
 
-@Slf4j
+import javax.validation.Valid;
+
 @CrossOrigin(value = "http://localhost:3000")
-@RestController
 @RequiredArgsConstructor
+@RestController
 @Tag(name = "Авторизация", description = "AuthController")
 public class AuthController {
 
@@ -28,21 +27,17 @@ public class AuthController {
 
     @Operation(summary = "Login", description = "Login")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
-        if (authService.login(req.getUsername(), req.getPassword())) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginReqDto req) {
+        authService.login(req.getUsername(), req.getPassword());
+
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Register", description = "Register")
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
-        if (authService.register(userMapper.toEntity(req))) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterReqDto req) {
+        authService.register(userMapper.toEntity(req));
+
+        return ResponseEntity.ok().build();
     }
 }

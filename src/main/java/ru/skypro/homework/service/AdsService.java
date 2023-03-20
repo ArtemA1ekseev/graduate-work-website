@@ -1,14 +1,16 @@
 package ru.skypro.homework.service;
 
-import org.springframework.security.core.Authentication;
 import ru.skypro.homework.entity.Ads;
 import ru.skypro.homework.entity.AdsComment;
-import ru.skypro.homework.entity.Images;
+import ru.skypro.homework.entity.Image;
+
 import java.util.Collection;
+
 /**
  * Сервис для работы с объявлениями
  */
 public interface AdsService {
+
     /**
      * Добавление объявления
      *
@@ -16,42 +18,45 @@ public interface AdsService {
      * @return Ads
      */
     Ads createAds(Ads ads);
+
     /**
      * Получение объявления по ID
      *
      * @param id ID объявления
      * @return Ads
      */
-    Ads getAds(long id);
+    Ads getAdsById(long id);
+
     /**
      * Получение всех объявлений
      *
      * @return Collection<Ads>
      */
     Collection<Ads> getAllAds();
+
     /**
      * Удаление объявления по ID
      *
-     * @param id             ID объявления
-     * @param authentication Аутентифицированный пользователь
-     * @return Возвращает true если объявление удалено, иначе false.
+     * @param id ID объявления
+     * @return Удаленное объявление
      */
-    boolean removeAds(long id, Authentication authentication);
+    Ads removeAdsById(long id);
+
     /**
      * Изменение объявления по ID
      *
-     * @param id             ID объявления
-     * @param updatedAdsDto  Изменённое объявление
-     * @param authentication Аутентифицированный пользователь
-     * @return Ads Изменённое объявление.
+     * @param updatedAds Изменённое объявление
+     * @return Ads Изменённое объявление
      */
-    Ads updateAds(long id, Ads updatedAdsDto, Authentication authentication);
+    Ads updateAds(Ads updatedAds);
+
     /**
      * Получение всех объявлений аутентифицированного пользователя
      *
      * @return Collection<Ads>
      */
     Collection<Ads> getAdsMe();
+
     /**
      * Добавление комментария к объявлению
      *
@@ -60,6 +65,7 @@ public interface AdsService {
      * @return AdsComment
      */
     AdsComment addAdsComment(long adKey, AdsComment adsComment);
+
     /**
      * Получение всех комментариев определённого объявления
      *
@@ -67,32 +73,41 @@ public interface AdsService {
      * @return Collection<AdsComment>
      */
     Collection<AdsComment> getAdsComments(long adKey);
+
     /**
      * Получение комментария по ID
      *
      * @param id    ID комментария
      * @param adKey ID объявления
-     * @return AdsComment
+     * @return Найденный комментарий
      */
     AdsComment getAdsComment(long adKey, long id);
+
     /**
      * Удаление комментария по ID
      *
-     * @param id             ID комментария
-     * @param adKey          ID объявления
-     * @param authentication Аутентифицированный пользователь
-     * @return Возвращает true если комментарий удалён, иначе false.
+     * @param id    ID комментария
+     * @param adKey ID объявления
+     * @return Удалённый комментарий
      */
-    boolean deleteAdsComment(long adKey, long id, Authentication authentication);
+    AdsComment deleteAdsComment(long adKey, long id);
+
     /**
      * Изменение комментария по ID
      *
      * @param id               ID комментария
      * @param adKey            ID объявления
      * @param updateAdsComment Изменённый комментарий
-     * @param authentication   Аутентифицированный пользователь
-     * @return AdsComment Изменённый комментарий.
+     * @return Изменённый комментарий
      */
-    AdsComment updateAdsComment(long adKey, long id, AdsComment updateAdsComment, Authentication authentication);
-    Ads updateAdsImage(Ads ads, Authentication authentication, Images image);
+    AdsComment updateAdsComment(long adKey, long id, AdsComment updateAdsComment);
+
+    /**
+     * Обновление картинки объявления
+     *
+     * @param ads   объявление
+     * @param image новая картинка
+     * @return Объявление с обновленной картинкой
+     */
+    Ads updateAdsImage(Ads ads, Image image);
 }

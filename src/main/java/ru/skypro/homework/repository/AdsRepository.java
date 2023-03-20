@@ -3,9 +3,9 @@ package ru.skypro.homework.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.skypro.homework.entity.Ads;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface AdsRepository extends JpaRepository<Ads, Long> {
 
-    List<Ads> findAllByAuthorId(long authorId);
+    Collection<Ads> findAllByAuthorId(long id);
 }

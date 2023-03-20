@@ -1,6 +1,8 @@
 package ru.skypro.homework.entity;
 
 import lombok.*;
+import ru.skypro.homework.dto.Role;
+
 import javax.persistence.*;
 
 @Entity
@@ -26,5 +28,7 @@ public class User {
 
     private String phone;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }

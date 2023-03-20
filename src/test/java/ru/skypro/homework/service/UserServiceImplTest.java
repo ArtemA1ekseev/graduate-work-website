@@ -13,6 +13,7 @@ import org.webjars.NotFoundException;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.security.MyUserDetails;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static ru.skypro.homework.security.SecurityUtils.getUserDetailsFromContext;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -49,9 +51,9 @@ class UserServiceImplTest {
     void createUser() {
         User testUser = new User();
 
-        testUser.setPassword("123");
+        testUser.setPassword("123456789");
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
+        when(userRepository.existsByEmail(any())).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("12345678");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
@@ -59,8 +61,6 @@ class UserServiceImplTest {
 
         assertEquals(testUser, user);
         assertEquals(testUser.getPassword(), user.getPassword());
-
-        verify(userRepository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -89,21 +89,20 @@ class UserServiceImplTest {
         testUser.setId(1L);
         testUser.setEmail("abc@mail.ru");
         testUser.setPassword("12345");
-        testUser.setRole("USER");
+        testUser.setRole(Role.USER);
 
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
 
-        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn("Ivan");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
+        when(getUserDetailsFromContext()).thenReturn(new MyUserDetails(testUser));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        User user = userService.update(new User());
+        User user = userService.updateUser(new User());
 
         assertEquals(testUser, user);
 
-        verify(userRepository, times(1)).findByEmail(anyString());
         verify(userRepository, times(1)).save(any(User.class));
 
     }
@@ -132,40 +131,23 @@ class UserServiceImplTest {
     @Test
     void newPassword() {
         User testUser = new User();
-        testUser.setEmail("b@maiil.ru");
+
+        testUser.setId(1L);
+        testUser.setEmail("abc@mail.ru");
+        testUser.setPassword("12345");
+        testUser.setRole(Role.USER);
 
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
 
-        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn("Ivan");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
+        when(getUserDetailsFromContext()).thenReturn(new MyUserDetails(testUser));
         when(passwordEncoder.matches(any(), any())).thenReturn(true);
-
         when(passwordEncoder.encode(any())).thenReturn("12345678");
 
         userService.newPassword("12345678", "87654321");
 
         assertTrue(true);
-
-        verify(userRepository, times(1)).findByEmail(anyString());
-    }
-
-    @Test
-    void newPasswordFalse() {
-        User testUser = new User();
-
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        SecurityContextHolder.setContext(securityContext);
-
-        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn("Ivan");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
-        when(passwordEncoder.matches(any(), any())).thenReturn(false);
-
-        userService.newPassword("12345678", "87654321");
-
-        assertFalse(false);
     }
 
     @Test
@@ -176,7 +158,7 @@ class UserServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        User user = userService.updateRoleUser(1L, Role.USER);
+        User user = userService.updateRole(1L, Role.USER);
 
         assertEquals(testUser, user);
 

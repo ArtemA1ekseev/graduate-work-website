@@ -1,9 +1,11 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.User;
@@ -11,10 +13,13 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.UserService;
 
+import javax.validation.ValidationException;
 import java.util.Collection;
 
 import static ru.skypro.homework.dto.Role.USER;
+import static ru.skypro.homework.security.SecurityUtils.getUserDetailsFromContext;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,32 +32,38 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        User createUser = userRepository.findById(user.getId()).orElse(user);
-        if (createUser.getRole() == null) {
-            createUser.setRole(USER.name());
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ValidationException(String.format("Пользователь \"%s\" уже существует!", user.getEmail()));
         }
 
-        user.setPassword(passwordEncoder.encode(createUser.getPassword()));
+        if (user.getRole() == null) {
+            user.setRole(USER);
+        }
 
-        return userRepository.save(createUser);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Collection<User> getUsers() {
+
         return userRepository.findAll();
     }
 
     @Override
-    public User update(User user) {
-        User initialUser = userRepository.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()).orElseThrow();
-        user.setId(initialUser.getId());
-        user.setEmail(initialUser.getEmail());
-        user.setPassword(initialUser.getPassword());
-        user.setRole(initialUser.getRole());
+    public User updateUser(User updatedUser) {
+        User user = getUserById(getUserDetailsFromContext().getId());
+
+        user.setFirstName(updatedUser.getFirstName());
+        user.setLastName(updatedUser.getLastName());
+        user.setPhone(updatedUser.getPhone());
+
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public User getUserById(long id) {
         return userRepository.findById(id)
@@ -60,25 +71,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean newPassword(String newPassword, String currentPassword) {
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()).orElseThrow();
-        if (passwordEncoder.matches(currentPassword, user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(newPassword));
-            userRepository.save(user);
-            userDetailsService.loadUserByUsername(user.getEmail());
-            return true;
+    public void newPassword(String newPassword, String currentPassword) {
+
+        UserDetails userDetails = getUserDetailsFromContext();
+
+        if (!passwordEncoder.matches(currentPassword, userDetails.getPassword())) {
+            throw new BadCredentialsException("Неверно указан текущий пароль!");
         }
-        return false;
+
+        userDetailsService.updatePassword(userDetails, passwordEncoder.encode(newPassword));
     }
 
     @Override
-    public User updateRoleUser(long id, Role role) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден!"));
-        user.setRole(role.name());
+    public User updateRole(long id, Role role) {
+
+        User user = getUserById(id);
+
+        user.setRole(role);
+
         userRepository.save(user);
-        userDetailsService.loadUserByUsername(user.getEmail());
+
         return user;
     }
 }
