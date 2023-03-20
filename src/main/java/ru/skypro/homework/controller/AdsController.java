@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +26,8 @@ import ru.skypro.homework.mapper.AdsCommentMapper;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImagesService;
+import ru.skypro.homework.service.impl.AdsImageServiceImpl;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Null;
@@ -36,6 +40,8 @@ import java.util.Collection;
 @RequestMapping("/ads")
 @Tag(name = "Объявления", description = "AdsController")
 public class AdsController {
+    Logger logger = LoggerFactory.getLogger(AdsController.class);
+
 
     private final AdsMapper mapper;
 
@@ -48,6 +54,7 @@ public class AdsController {
     @Operation(summary = "getAllAds", description = "getAllAds")
     @GetMapping
     public ResponseWrapper<AdsDto> getAllAds() {
+        logger.info("Request for get all ads");
         Collection<Ads> listAds = adsService.getAllAds();
         return ResponseWrapper.of(mapper.toDto(listAds));
     }
@@ -60,6 +67,7 @@ public class AdsController {
             required = true, schema = @Schema())
                                          @RequestPart("image") MultipartFile image,
                                          @RequestPart("properties") @Valid CreateAdsDto dto) {
+        logger.info("Request for add new ad");
         Ads ads = adsService.createAds(mapper.toEntity(dto));
         Images images = imagesService.uploadImage(image, ads);
         ads.setImage(images);
@@ -68,6 +76,7 @@ public class AdsController {
 
     @GetMapping(value = "images/{id}", produces = {MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+        logger.info("Request for get image by id");
         Images images = imagesService.getImage(id);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(images.getMediaType()));
@@ -78,6 +87,7 @@ public class AdsController {
     @Operation(summary = "getAdsMe", description = "getAdsMe")
     @GetMapping("/me")
     public ResponseWrapper<AdsDto> getAdsMe() {
+        logger.info("Request for get my ads");
         Collection<Ads> listAds = adsService.getAdsMe();
         return ResponseWrapper.of(mapper.toDto(listAds));
     }
@@ -85,6 +95,7 @@ public class AdsController {
     @Operation(summary = "removeAds", description = "removeAds")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> removeAds(@PathVariable long id, Authentication authentication) {
+        logger.info("Request for delete ad by id");
         if (adsService.removeAds(id, authentication)) {
             return ResponseEntity.ok().build();
         }
@@ -94,6 +105,7 @@ public class AdsController {
     @Operation(summary = "getAds", description = "getAds")
     @GetMapping("/{id}")
     public FullAdsDto getAds(@PathVariable long id) {
+        logger.info("Request for get ad by id");
         return mapper.toFullAdsDto(adsService.getAds(id));
     }
 
@@ -104,6 +116,7 @@ public class AdsController {
                                                  @Parameter(in = ParameterIn.DEFAULT, description = "Новая картинка",
                                                          schema = @Schema())
                                                  @RequestPart(value = "image") @Valid MultipartFile image) {
+        logger.info("Request for update ad image by id");
 
         Ads ads = adsService.getAds(id);
 
@@ -129,6 +142,7 @@ public class AdsController {
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@PathVariable long id, Authentication authentication,
                                             @RequestBody AdsDto updatedAdsDto) {
+        logger.info("Request for update ad by id");
 
         AdsDto updateAdsDto = mapper.toDto(adsService.updateAds(id, mapper.toEntity(updatedAdsDto), authentication));
 
@@ -142,6 +156,7 @@ public class AdsController {
     @Operation(summary = "getAdsComments", description = "getAdsComments")
     @GetMapping("/{adKey}/comments")
     public ResponseWrapper<AdsCommentDto> getAdsComments(@PathVariable int adKey) {
+        logger.info("Request for get ad comment");
         Collection<AdsComment> list = adsService.getAdsComments(adKey);
         return ResponseWrapper.of(commentMapper.toDto(list));
     }
@@ -149,6 +164,7 @@ public class AdsController {
     @Operation(summary = "addAdsComments", description = "addAdsComments")
     @PostMapping("/{adKey}/comments")
     public AdsCommentDto addAdsComments(@PathVariable long adKey, @RequestBody AdsCommentDto adsCommentDto) {
+        logger.info("Request for add ad comment");
         AdsComment adsComment = adsService.addAdsComment(adKey, commentMapper.toEntity(adsCommentDto));
         return commentMapper.toDto(adsComment);
     }
@@ -157,6 +173,7 @@ public class AdsController {
     @DeleteMapping("/{adKey}/comments/{id}")
     public ResponseEntity<HttpStatus> deleteAdsComment(@PathVariable int adKey, @PathVariable long id,
                                                        Authentication authentication) {
+        logger.info("Request for delete ad comment");
         if (adsService.deleteAdsComment(adKey, id, authentication)) {
             return ResponseEntity.ok().build();
         }
@@ -166,6 +183,7 @@ public class AdsController {
     @Operation(summary = "getAdsComment", description = "getAdsComment")
     @GetMapping("/{adKey}/comments/{id}")
     public AdsCommentDto getAdsComment(@PathVariable int adKey, @PathVariable long id) {
+        logger.info("Request for get ad comment");
         AdsComment adsComment = adsService.getAdsComment(adKey, id);
         return commentMapper.toDto(adsComment);
     }
@@ -175,6 +193,7 @@ public class AdsController {
     public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable int adKey, @PathVariable long id,
                                                           @RequestBody AdsCommentDto updatedAdsCommentDto,
                                                           Authentication authentication) {
+        logger.info("Request for update ad comment");
         AdsCommentDto updateAdsCommentDto = commentMapper.toDto(adsService.updateAdsComment(adKey, id,
                 commentMapper.toEntity(updatedAdsCommentDto), authentication));
         if (updateAdsCommentDto.equals(updatedAdsCommentDto)) {

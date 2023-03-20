@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,8 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 public class AdsImageServiceImpl implements AdsImageService {
 
+    Logger logger = LoggerFactory.getLogger(AdsImageServiceImpl.class);
+
     @Value("${path.to.ads.images.folder}")
     private String imageDir;
     private AdsImageRepository imageRepository;
@@ -32,6 +36,7 @@ public class AdsImageServiceImpl implements AdsImageService {
     }
 
     public void addImage(int adsId, MultipartFile imageFile) throws IOException {
+        logger.info("Was invoked method for add image");
         Ads ads = adsRepository.findById(adsId).get();
         Path path = Path.of(imageDir,ads + "." + getExtensions(imageFile.getOriginalFilename()));
         if (!Files.exists(path.getParent())) {
@@ -53,9 +58,11 @@ public class AdsImageServiceImpl implements AdsImageService {
         image.setData(imageFile.getBytes());
         image.setAds(ads);
         imageRepository.save(image);
+        logger.info("image saved");
     }
 
     private String getExtensions(String fileName) {
+        logger.info("Was invoked method for get extension");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 }

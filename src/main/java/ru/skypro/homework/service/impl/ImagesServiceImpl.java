@@ -1,6 +1,8 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,9 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 public class ImagesServiceImpl implements ImagesService {
 
+    Logger logger = LoggerFactory.getLogger(ImagesServiceImpl.class);
+
+
     private final ImagesRepository imagesRepository;
 
     private final AdsService adsService;
@@ -30,6 +35,7 @@ public class ImagesServiceImpl implements ImagesService {
 
     @Override
     public Images uploadImage(MultipartFile imageFile, Ads ads) throws IOException {
+        logger.info("Was invoked method for upload image");
         Path filePath = Path.of(imagesDir, "ads_" + ads.getId() + "." + getExtensions(Objects.requireNonNull(imageFile.getOriginalFilename())));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -51,20 +57,21 @@ public class ImagesServiceImpl implements ImagesService {
     }
 
     private String getExtensions(String fileName) {
+        logger.info("Was invoked method for get extensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     @Override
     public Images getImage(long id) {
+        logger.info("Was invoked method for get image by id");
         return imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
     }
 
     @Override
     public void removeImage(long id) {
+        logger.info("Was invoked method for delete image by id");
         Images images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
-
         images.setAds(null);
-
         imagesRepository.deleteById(id);
     }
 }
