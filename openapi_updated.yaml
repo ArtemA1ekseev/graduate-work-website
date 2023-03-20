@@ -1,0 +1,664 @@
+openapi: 3.0.1
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /users/set_password:
+    post:
+      tags:
+        - Пользователи
+      summary: setPassword
+      operationId: setPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPassword'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NewPassword'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          content: {}
+          description: Not Found
+
+  /register:
+    post:
+      tags:
+        - Авторизация
+      summary: register
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterReq'
+        required: true
+      responses:
+        '404':
+          description: Not Found
+        '201':
+          content: {}
+          description: Created
+        '401':
+          content: {}
+          description: Unauthorized
+        '403':
+          content: {}
+          description: Forbidden
+  /login:
+    post:
+      tags:
+        - Авторизация
+      summary: login
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginReq'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '404':
+          description: Not Found
+        '401':
+          content: {}
+          description: Unauthorized
+        '403':
+          content: {}
+          description: Forbidden
+  /ads:
+    get:
+      tags:
+        - Объявления
+      operationId: getALLAds
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseWrapperAds'
+    post:
+      tags:
+        - Объявления
+      summary: addAds
+      operationId: addAds
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - image
+                - properties
+              type: object
+              properties:
+                properties:
+                  $ref: '#/components/schemas/CreateAds'
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Ads'
+        '404':
+          description: Not Found
+        '403':
+          content: {}
+          description: Forbidden
+        '401':
+          content: {}
+          description: Unauthorized
+  /ads/{ad_pk}/comments:
+    get:
+      tags:
+        - Объявления
+      summary: getComments
+      operationId: getComments
+      parameters:
+        - name: ad_pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseWrapperComment'
+        '404':
+          description: Not Found
+
+    post:
+      tags:
+        - Объявления
+      summary: addComments
+      operationId: addComments
+      parameters:
+        - name: ad_pk
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Not Found
+        '403':
+          content: {}
+          description: Forbidden
+        '401':
+          content: {}
+          description: Unauthorized
+  /users/me:
+    get:
+      tags:
+        - Пользователи
+      summary: getUser
+      operationId: getUser_1
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+          description: OK
+        '401':
+          content: {}
+          description: Unauthorized
+        '403':
+          content: {}
+          description: Forbidden
+        '404':
+          content: {}
+          description: Not Found
+    patch:
+      tags:
+        - Пользователи
+      summary: updateUser
+      operationId: updateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        '204':
+          description: No Content
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+  /users/me/image:
+    patch:
+      tags:
+        - Пользователи
+      summary: updateUserImage
+      description: UpdateUserImage
+      operationId: updateUserImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - image
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content: {}
+        '404':
+          description: Not Found
+  /ads/{id}:
+    get:
+      tags:
+        - Объявления
+      summary: getFullAd
+      operationId: getAds
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FullAds'
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Объявления
+      summary: removeAds
+      operationId: removeAds
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          content: {}
+          description: No Content
+        '401':
+          content: {}
+          description: Unauthorized
+        '403':
+          content: {}
+          description: Forbidden
+    patch:
+      tags:
+        - Объявления
+      summary: updateAds
+      operationId: updateAds
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAds'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Ads'
+        '404':
+          description: Not Found
+        '403':
+          content: {}
+          description: Forbidden
+        '401':
+          content: {}
+          description: Unauthorized
+  /ads/{ad_pk}/comments/{id}:
+    get:
+      tags:
+        - Объявления
+      summary: getComments
+      operationId: getComments_1
+      parameters:
+        - name: ad_pk
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Объявления
+      summary: deleteComments
+      operationId: deleteComments
+      parameters:
+        - name: ad_pk
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+        '403':
+          content: {}
+          description: Forbidden
+        '401':
+          content: {}
+          description: Unauthorized
+    patch:
+      tags:
+        - Объявления
+      summary: updateComments
+      operationId: updateComments
+      parameters:
+        - name: ad_pk
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Not Found
+        '403':
+          content: {}
+          description: Forbidden
+        '401':
+          content: {}
+          description: Unauthorized
+        
+  /ads/me:
+    get:
+      operationId: getAdsMeUsingGET
+      parameters:
+        - in: query
+          name: authenticated
+          schema:
+            type: boolean
+        - in: query
+          name: authorities[0].authority
+          schema:
+            type: string
+        - in: query
+          name: credentials
+          schema:
+            type: object
+        - in: query
+          name: details
+          schema:
+            type: object
+        - in: query
+          name: principal
+          schema:
+            type: object
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseWrapperAds'
+          description: OK
+        '401':
+          content: {}
+          description: Unauthorized
+        '403':
+          content: {}
+          description: Forbidden
+        '404':
+          content: {}
+          description: Not Found
+      summary: getAdsMe
+      tags:
+        - Объявления
+      x-accepts: '*/*'
+  /image/{id}:
+    patch:
+      tags:
+        - Изображения
+      summary: updateAdsImage
+      operationId: updateImage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - image
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: byte
+        '404':
+          description: Not Found
+components:
+  schemas:
+    NewPassword:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+    RegisterReq:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+    LoginReq:
+      type: object
+      properties:
+        password:
+          type: string
+        username:
+          type: string
+    CreateAds:
+      required:
+        - description
+        - price
+        - title
+      type: object
+      properties:
+        description:
+          type: string
+        price:
+          type: integer
+          format: int32
+        title:
+          type: string
+    Ads:
+      type: object
+      properties:
+        author:
+          type: integer
+          format: int32
+        image:
+          type: array
+          items:
+            type: string
+        pk:
+          type: integer
+          format: int32
+        price:
+          type: integer
+          format: int32
+        title:
+          type: string
+    Comment:
+      type: object
+      properties:
+        author:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        pk:
+          type: integer
+          format: int32
+        text:
+          type: string
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        id:
+          type: integer
+          format: int32
+        lastName:
+          type: string
+        phone:
+          type: string
+        regDate:
+          type: string
+        city:
+          type: string
+        image:
+          type: string
+    ResponseWrapperAds:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ads'
+    FullAds:
+      type: object
+      properties:
+        authorFirstName:
+          type: string
+        authorLastName:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        image:
+          type: array
+          items:
+            type: string
+        phone:
+          type: string
+        pk:
+          type: integer
+          format: int32
+        price:
+          type: integer
+          format: int32
+        title:
+          type: string
+    ResponseWrapperComment:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
