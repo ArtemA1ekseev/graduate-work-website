@@ -34,4 +34,5 @@ public interface AdsMapper extends WebMapper<AdsDto, Ads> {
     @Mapping(target = "email", source = "author.email")
     @Mapping(target = "image", expression = "java(\"/ads/images/\" + entity.getImage().getId())")
     FullAdsDto toFullAdsDto(Ads entity);
+
 }

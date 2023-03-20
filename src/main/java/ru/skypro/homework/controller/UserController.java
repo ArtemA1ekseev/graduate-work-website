@@ -37,7 +37,9 @@ public class UserController {
     @Operation(summary = "getUsers", description = "getUsers")
     @GetMapping("/me")
     public ResponseWrapper<UserDto> getUsers() {
+
         Collection<User> users = userService.getUsers();
+
         return ResponseWrapper.of(mapper.toDto(users));
     }
 

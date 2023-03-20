@@ -20,4 +20,5 @@ public interface UserMapper extends WebMapper<UserDto, User> {
     @Mapping(target = "role", defaultValue = "USER")
     @Mapping(source = "username", target = "email")
     User toEntity(RegisterReqDto dto);
+
 }

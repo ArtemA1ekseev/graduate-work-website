@@ -102,6 +102,7 @@ public interface AdsService {
      */
     AdsComment updateAdsComment(long adKey, long id, AdsComment updateAdsComment);
 
+
     /**
      * Обновление картинки объявления
      *
