@@ -44,7 +44,6 @@ public class ImageServiceImpl implements ImageService {
 
     private final AdsMapper adsMapper;
 
-    @Transactional(readOnly = true)
     @Override
     public Image uploadImage(MultipartFile imageFile, Ads ads) throws IOException {
         logger.info("Was invoked method for upload image");
@@ -68,7 +67,6 @@ public class ImageServiceImpl implements ImageService {
         return imagesRepository.save(images);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public AdsDto updateImage(MultipartFile imageFile, Authentication authentication, long adsId) throws IOException {
         logger.info("Was invoked method for update image");
