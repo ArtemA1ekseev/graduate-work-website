@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName()).orElseThrow();
 
-
         if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);

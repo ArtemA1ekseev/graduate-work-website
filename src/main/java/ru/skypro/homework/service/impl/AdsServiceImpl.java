@@ -165,6 +165,5 @@ public class AdsServiceImpl implements AdsService {
             return adsCommentMapper.toDto(updatedAdsComment);
         }
         return updateAdsComment;
-
     }
 }

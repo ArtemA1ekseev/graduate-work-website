@@ -34,7 +34,7 @@ public interface AdsService {
     Ads getAds(long id);
 
     /**
-     *
+     * Получение DTO с полной информацией об объекте
      */
     FullAdsDto getFullAdsDto(long id);
 

@@ -27,6 +27,7 @@ public interface ImagesService {
      *
      * @return Images
      */
+    Images getImage(long id);
 
     /**
      * Обновление картинки объявления
@@ -39,8 +40,11 @@ public interface ImagesService {
      */
     AdsDto updateImage(MultipartFile imageFile, Authentication authentication, long adsId) throws IOException;
 
-    Images getImage(long id);
-
+    /**
+     * Получение массива байтов(для фронта)
+     * @param id
+     * @return
+     */
     byte[] getImageBytesArray(long id);
 
     /**

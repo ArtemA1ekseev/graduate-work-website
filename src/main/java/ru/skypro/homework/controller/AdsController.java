@@ -92,13 +92,10 @@ public class AdsController {
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@PathVariable long id, Authentication authentication,
                                             @RequestBody AdsDto updatedAdsDto) {
-
         AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto, authentication);
-
         if (updateAdsDto.equals(updatedAdsDto)) {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
         }
-
         return ResponseEntity.ok(updateAdsDto);
     }
 

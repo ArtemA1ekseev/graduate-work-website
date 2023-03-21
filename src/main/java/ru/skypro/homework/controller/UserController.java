@@ -42,11 +42,9 @@ public class UserController {
     @Operation(summary = "setPassword", description = "setPassword")
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPasswordDto) {
-
         if (userService.newPassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword())) {
             return ResponseEntity.ok(newPasswordDto);
         }
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 

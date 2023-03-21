@@ -90,7 +90,6 @@ public class ImagesServiceImpl implements ImagesService {
 
     @Override
     public Images getImage(long id) {
-
         return imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
     }
 

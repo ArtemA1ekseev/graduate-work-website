@@ -33,6 +33,7 @@ public interface UserService {
 
     /**
      * Получение пользователя по ID
+     *
      * @param id ID пользователя
      * @return User с данным ID
      */
@@ -40,6 +41,7 @@ public interface UserService {
 
     /**
      * Изменение пароля пользователя
+     *
      * @param newPassword новый пароль
      * @param currentPassword старый пароль
      * @return Возвращает true если пароль успешно изменен, иначе false
