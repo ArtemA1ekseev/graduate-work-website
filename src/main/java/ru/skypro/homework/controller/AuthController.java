@@ -3,6 +3,8 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,9 @@ import javax.validation.Valid;
 @Tag(name = "Авторизация", description = "AuthController")
 public class AuthController {
 
+    Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+
     private final AuthService authService;
 
     private final UserMapper userMapper;
@@ -28,6 +33,7 @@ public class AuthController {
     @Operation(summary = "Login", description = "Login")
     @PostMapping("/login")
     public ResponseEntity<Void> login(@Valid @RequestBody LoginReqDto req) {
+        logger.info("Request for authorization user");
         authService.login(req.getUsername(), req.getPassword());
 
         return ResponseEntity.ok().build();
@@ -36,6 +42,7 @@ public class AuthController {
     @Operation(summary = "Register", description = "Register")
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterReqDto req) {
+        logger.info("Request for registration user");
         authService.register(userMapper.toEntity(req));
 
         return ResponseEntity.ok().build();
