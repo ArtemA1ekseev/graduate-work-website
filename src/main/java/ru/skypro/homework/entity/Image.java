@@ -26,6 +26,11 @@ public class Image {
 
     private String mediaType;
 
+    private String filePath;
+
+    @OneToOne
+    private Ads ads;
+
     public String toString() {
         return "AdsEntity(id=" + this.getId() + ", image=" + java.util.Arrays.toString(this.getImage()) + ")";
     }

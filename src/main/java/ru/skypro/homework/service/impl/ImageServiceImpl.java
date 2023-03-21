@@ -1,41 +1,116 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
+import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.entity.Ads;
 import ru.skypro.homework.entity.Image;
+import ru.skypro.homework.entity.User;
+import ru.skypro.homework.mapper.AdsMapper;
+import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 
-import java.io.IOException;
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
-@Transactional
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private final ImageRepository imageRepository;
+    @Value("${path.to.images.folder}")
+    private String imagesDir;
 
+    private final ImageRepository imagesRepository;
+
+    private final AdsRepository adsRepository;
+
+    private final UserRepository userRepository;
+
+    private final AdsMapper adsMapper;
+
+    @Transactional(readOnly = true)
     @Override
-    public Image uploadImage(MultipartFile imageFile) throws IOException {
-
-        Image image = new Image();
-
-        image.setImage(imageFile.getBytes());
-        image.setFileSize(imageFile.getSize());
-        image.setMediaType(imageFile.getContentType());
-        image.setImage(imageFile.getBytes());
-
-        return imageRepository.save(image);
+    public Image uploadImage(MultipartFile imageFile, Ads ads) throws IOException {
+        Path filePath = Path.of(imagesDir, "ads_" + ads.getId() + "." + getExtensions(Objects.requireNonNull(imageFile.getOriginalFilename())));
+        Files.createDirectories(filePath.getParent());
+        Files.deleteIfExists(filePath);
+        try (
+                InputStream is = imageFile.getInputStream();
+                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+        ) {
+            bis.transferTo(bos);
+        }
+        Image images = new Image();
+        images.setFilePath(filePath.toString());
+        images.setFileSize(imageFile.getSize());
+        images.setMediaType(imageFile.getContentType());
+        images.setImage(imageFile.getBytes());
+        images.setAds(ads);
+        return imagesRepository.save(images);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Image getImageById(long id) {
+    public AdsDto updateImage(MultipartFile imageFile, Authentication authentication, long adsId) throws IOException {
+        Ads ads = adsRepository.findById(adsId).orElseThrow(() -> new NotFoundException("Объявление с id " + adsId + " не найдено!"));
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        if (ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+            Image updatedImage = imagesRepository.findByAdsId(adsId);
+            Path filePath = Path.of(updatedImage.getFilePath());
+            Files.deleteIfExists(filePath);
+            try (
+                    InputStream is = imageFile.getInputStream();
+                    OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                    BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                    BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+            ) {
+                bis.transferTo(bos);
+            }
+            updatedImage.setFileSize(imageFile.getSize());
+            updatedImage.setMediaType(imageFile.getContentType());
+            updatedImage.setImage(imageFile.getBytes());
+            ads.setImage(imagesRepository.save(updatedImage));
+            adsRepository.save(ads);
+        }
+        return adsMapper.toDto(ads);
+    }
 
-        return imageRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
+    private String getExtensions(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Image getImage(long id) {
+        return imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public byte[] getImageBytesArray(long id) {
+        Image images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
+        return images.getImage();
+    }
+
+    @Override
+    public void removeImage(long id) throws IOException{
+        Image images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
+        Path filePath = Path.of(images.getFilePath());
+        images.getAds().setImage(null);
+        imagesRepository.deleteById(id);
+        Files.deleteIfExists(filePath);
     }
 }

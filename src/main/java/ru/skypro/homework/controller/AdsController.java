@@ -2,6 +2,8 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -9,19 +11,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
-import ru.skypro.homework.entity.Ads;
-import ru.skypro.homework.entity.AdsComment;
-import ru.skypro.homework.entity.Image;
-import ru.skypro.homework.mapper.AdsCommentMapper;
-import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Collection;
 
 @CrossOrigin(value = "http://localhost:3000")
 @RequiredArgsConstructor
@@ -30,10 +28,6 @@ import java.util.Collection;
 @Tag(name = "Объявления", description = "AdsController")
 public class AdsController {
 
-    private final AdsMapper mapper;
-
-    private final AdsCommentMapper commentMapper;
-
     private final AdsService adsService;
 
     private final ImageService imagesService;
@@ -41,10 +35,7 @@ public class AdsController {
     @Operation(summary = "getAllAds", description = "getAllAds")
     @GetMapping
     public ResponseWrapper<AdsDto> getAllAds() {
-
-        Collection<Ads> listAds = adsService.getAllAds();
-
-        return ResponseWrapper.of(mapper.toDto(listAds));
+        return ResponseWrapper.of(adsService.getAllAds());
     }
 
     @SneakyThrows
@@ -52,128 +43,100 @@ public class AdsController {
     @Operation(summary = "addAds", description = "addAds")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> addAds(@Parameter(description = "Данные нового объявления")
+    public ResponseEntity<AdsDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "Данные нового объявления",
+            required = true, schema = @Schema())
                                          @RequestPart("image") MultipartFile image,
-                                         @Valid @RequestPart("properties") CreateAdsDto dto) {
-
-        Ads ads = adsService.createAds(mapper.toEntity(dto));
-
-        ads.setImage(imagesService.uploadImage(image));
-
-        return ResponseEntity.ok(mapper.toDto(adsService.createAds(ads)));
+                                         @RequestPart("properties") @Valid CreateAdsDto dto) {
+        return ResponseEntity.ok(adsService.createAds(dto, image));
     }
 
     @GetMapping(value = "images/{id}", produces = {MediaType.IMAGE_PNG_VALUE})
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) {
-
-        Image image = imagesService.getImageById(id);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(image.getImage());
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+        return ResponseEntity.ok(imagesService.getImageBytesArray(id));
     }
 
     @Operation(summary = "getAdsMe", description = "getAdsMe")
     @GetMapping("/me")
     public ResponseWrapper<AdsDto> getAdsMe() {
-
-        Collection<Ads> listAds = adsService.getAdsMe();
-
-        return ResponseWrapper.of(mapper.toDto(listAds));
+        return ResponseWrapper.of(adsService.getAdsMe());
     }
 
+    @SneakyThrows
     @Operation(summary = "removeAds", description = "removeAds")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeAds(@PathVariable("id") long id) {
-
-        adsService.removeAdsById(id);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<HttpStatus> removeAds(@PathVariable long id, Authentication authentication) {
+        if (adsService.removeAds(id, authentication)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
     @Operation(summary = "getAds", description = "getAds")
     @GetMapping("/{id}")
-    public FullAdsDto getAds(@PathVariable("id") long id) {
-
-        return mapper.toFullAdsDto(adsService.getAdsById(id));
+    public FullAdsDto getAds(@PathVariable long id) {
+        return adsService.getFullAdsDto(id);
     }
 
     @SneakyThrows
     @Operation(summary = "updateAdsImage", description = "updateAdsImage")
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> updateAdsImage(@PathVariable("id") long id,
-                                                 @Parameter(description = "Новая картинка")
+    public ResponseEntity<AdsDto> updateAdsImage(@PathVariable long id, Authentication authentication,
+                                                 @Parameter(in = ParameterIn.DEFAULT, description = "Новая картинка",
+                                                         schema = @Schema())
                                                  @RequestPart(value = "image") @Valid MultipartFile image) {
-
-        Ads ads = adsService.getAdsById(id);
-
-        Ads updatedAds = adsService.updateAdsImage(ads, imagesService.uploadImage(image));
-
-        return ResponseEntity.ok(mapper.toDto(updatedAds));
+        return ResponseEntity.ok(imagesService.updateImage(image, authentication, id));
     }
 
     @SneakyThrows
     @Operation(summary = "updateAds", description = "updateAds")
     @PatchMapping("/{id}")
-    public ResponseEntity<AdsDto> updateAds(@PathVariable("id") long id,
-                                            @Valid @RequestBody AdsDto updatedAdsDto) {
-
-        Ads ads = mapper.toEntity(updatedAdsDto);
-
-        ads.setId(id);
-
-        AdsDto updateAdsDto = mapper.toDto(adsService.updateAds(ads));
-
+    public ResponseEntity<AdsDto> updateAds(@PathVariable long id, Authentication authentication,
+                                            @RequestBody AdsDto updatedAdsDto) {
+        AdsDto updateAdsDto = adsService.updateAds(id, updatedAdsDto, authentication);
+        if (updateAdsDto.equals(updatedAdsDto)) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(updateAdsDto);
     }
 
     @Operation(summary = "getAdsComments", description = "getAdsComments")
     @GetMapping("/{adKey}/comments")
-    public ResponseWrapper<AdsCommentDto> getAdsComments(@PathVariable("adKey") int adKey) {
-
-        Collection<AdsComment> list = adsService.getAdsComments(adKey);
-
-        return ResponseWrapper.of(commentMapper.toDto(list));
+    public ResponseWrapper<AdsCommentDto> getAdsComments(@PathVariable int adKey) {
+        return ResponseWrapper.of(adsService.getAdsComments(adKey));
     }
 
     @Operation(summary = "addAdsComments", description = "addAdsComments")
     @PostMapping("/{adKey}/comments")
-    public AdsCommentDto addAdsComments(@PathVariable("adKey") long adKey,
-                                        @Valid @RequestBody AdsCommentDto adsCommentDto) {
-
-        AdsComment adsComment = adsService.addAdsComment(adKey, commentMapper.toEntity(adsCommentDto));
-
-        return commentMapper.toDto(adsComment);
+    public AdsCommentDto addAdsComments(@PathVariable long adKey, @RequestBody AdsCommentDto adsCommentDto) {
+        return adsService.addAdsComment(adKey, adsCommentDto);
     }
 
     @Operation(summary = "deleteAdsComment", description = "deleteAdsComment")
     @DeleteMapping("/{adKey}/comments/{id}")
-    public ResponseEntity<HttpStatus> deleteAdsComment(@PathVariable("adKey") int adKey, @PathVariable("id") long id) {
-
-        adsService.deleteAdsComment(adKey, id);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<HttpStatus> deleteAdsComment(@PathVariable int adKey, @PathVariable long id,
+                                                       Authentication authentication) {
+        if (adsService.deleteAdsComment(adKey, id, authentication)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
     @Operation(summary = "getAdsComment", description = "getAdsComment")
     @GetMapping("/{adKey}/comments/{id}")
-    public AdsCommentDto getAdsComment(@PathVariable("adKey") int adKey, @PathVariable("id") long id) {
-
-        AdsComment adsComment = adsService.getAdsComment(adKey, id);
-
-        return commentMapper.toDto(adsComment);
+    public AdsCommentDto getAdsComment(@PathVariable int adKey, @PathVariable long id) {
+        return adsService.getAdsComment(adKey, id);
     }
 
     @Operation(summary = "updateAdsComment", description = "updateAdsComment")
     @PatchMapping("/{adKey}/comment/{id}")
-    public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable("adKey") int adKey,
-                                                          @PathVariable("id") long id,
-                                                          @Valid @RequestBody AdsCommentDto updatedAdsCommentDto) {
-
-        AdsComment adsComment = commentMapper.toEntity(updatedAdsCommentDto);
-
-        AdsCommentDto updateAdsCommentDto = commentMapper.toDto(adsService.updateAdsComment(adKey, id, adsComment));
-
-        return ResponseEntity.ok(updateAdsCommentDto);
+    public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable int adKey, @PathVariable long id,
+                                                          @RequestBody AdsCommentDto updateAdsCommentDto,
+                                                          Authentication authentication) {
+        AdsCommentDto updatedAdsCommentDto = adsService.updateAdsComment(adKey, id,
+                updateAdsCommentDto, authentication);
+        if (updateAdsCommentDto.equals(updatedAdsCommentDto)) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(updatedAdsCommentDto);
     }
 }
