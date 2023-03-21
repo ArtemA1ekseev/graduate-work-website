@@ -21,8 +21,8 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/login",
             "/register",
-            "GET /ads",
-            "GET /ads/images/**"
+            "/ads",
+            "/ads/images/**"
     };
 
     @Bean
