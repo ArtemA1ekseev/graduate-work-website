@@ -88,7 +88,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));
         logger.warn("Ad by id {} not found", id);
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        if (ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+        if (ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().getAuthority().equals("ADMIN")) {
             List<Long> adsComments = adsCommentRepository.findAll().stream()
                     .filter(adsComment -> adsComment.getAds().getId() == ads.getId())
                     .map(AdsComment::getId)
@@ -109,7 +109,7 @@ public class AdsServiceImpl implements AdsService {
         Ads updatedAds = adsRepository.findById(id).orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));
         logger.warn("Ad by id {} not found", id);
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        if (updatedAds.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+        if (updatedAds.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().getAuthority().equals("ADMIN")) {
             updatedAds.setTitle(updateAdsDto.getTitle());
             updatedAds.setDescription(updateAdsDto.getDescription());
             updatedAds.setPrice(updateAdsDto.getPrice());
@@ -173,7 +173,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + id + " не найден!"));
         logger.warn("Comment by {} not found", id);
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        if (adsComment.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+        if (adsComment.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().getAuthority().equals("ADMIN")) {
             if (adsComment.getAds().getId() != adKey) {
                 logger.warn("Comment by id {} does not belong to ad by id {} ", id, adKey);
                 throw new NotFoundException("Комментарий с id " + id + " не принадлежит объявлению с id " + adKey);
@@ -193,7 +193,7 @@ public class AdsServiceImpl implements AdsService {
                 .orElseThrow(() -> new NotFoundException("Комментарий с id " + id + " не найден!"));
         logger.warn("Comment by id {} not found", id);
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        if (updatedAdsComment.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+        if (updatedAdsComment.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().getAuthority().equals("ADMIN")) {
             if (updatedAdsComment.getAds().getId() != adKey) {
                 logger.warn("Comment by id {} does not belong to ad by id {} ", id, adKey);
                 throw new NotFoundException("Комментарий с id " + id + " не принадлежит объявлению с id " + adKey);
