@@ -55,13 +55,15 @@ class UserControllerTest {
 
     @Test
     void addUser() throws Exception {
-        UserDto userDto = new UserDto();
+
+        User user = new User();
         CreateUserDto createUserDto = new CreateUserDto();
 
-        userDto.setEmail("a@mail.ru");
-        userDto.setFirstName("Ivan");
-        userDto.setLastName("Ivanov");
-        userDto.setPhone("+79991254698");
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPassword("12345678");
+        user.setPhone("+79991254698");
 
         createUserDto.setEmail("a@mail.ru");
         createUserDto.setFirstName("Ivan");
@@ -69,7 +71,7 @@ class UserControllerTest {
         createUserDto.setPassword("12345678");
         createUserDto.setPhone("+79991254698");
 
-        when(userService.createUser(any())).thenReturn(userDto);
+        when(userMapper.toCreateUserDto(any())).thenReturn(createUserDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users").
                         contentType(MediaType.APPLICATION_JSON).
@@ -77,14 +79,34 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(userDto.getEmail()))
-                .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userDto.getLastName()))
-                .andExpect(jsonPath("$.phone").value(userDto.getPhone()));
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
+                .andExpect(jsonPath("$.password").value(user.getPassword()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.phone").value(user.getPhone()));
     }
 
     @Test
     void getUsers() throws Exception {
+
+        Collection<User> users = new ArrayList<>();
+
+        User user1 = new User();
+        User user2 = new User();
+
+        user1.setEmail("a@mail.ru");
+        user1.setFirstName("Ivan");
+        user1.setLastName("Ivanov");
+        user1.setPhone("+79991254698");
+
+        user2.setEmail("b@mail.ru");
+        user2.setFirstName("Ivan2");
+        user2.setLastName("Ivanov2");
+        user2.setPhone("+79991254699");
+
+        users.add(user1);
+        users.add(user2);
+
         List<UserDto> usersDto = new ArrayList<>();
 
         UserDto userDto1 = new UserDto();
@@ -103,7 +125,8 @@ class UserControllerTest {
         usersDto.add(userDto1);
         usersDto.add(userDto2);
 
-        when(userService.getUsers()).thenReturn(usersDto);
+        when(userMapper.toDto(anyCollection())).thenReturn(usersDto);
+
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/me"))
                 .andDo(print())
@@ -117,14 +140,22 @@ class UserControllerTest {
 
     @Test
     void update() throws Exception {
+        User user = new User();
         UserDto userDto = new UserDto();
+
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPhone("+79991254698");
 
         userDto.setEmail("a@mail.ru");
         userDto.setFirstName("Ivan");
         userDto.setLastName("Ivanov");
         userDto.setPhone("+79991254698");
 
-        when(userService.updateUser(any())).thenReturn(userDto);
+        when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -132,10 +163,10 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(userDto.getEmail()))
-                .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userDto.getLastName()))
-                .andExpect(jsonPath("$.phone").value(userDto.getPhone()));
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.phone").value(user.getPhone()));
     }
 
     @Test
@@ -159,6 +190,15 @@ class UserControllerTest {
 
     @Test
     void getUser() throws Exception {
+        User user = new User();
+
+        user.setId(1L);
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPassword("12345678");
+        user.setPhone("+79991254698");
+
         UserDto userDto = new UserDto();
 
         userDto.setId(1);
@@ -168,6 +208,8 @@ class UserControllerTest {
         userDto.setPhone("+79991254698");
 
         when(userService.getUserById(anyLong())).thenReturn(userDto);
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/1"))
                 .andDo(print())
@@ -182,6 +224,18 @@ class UserControllerTest {
     @Test
     @WithMockUser(authorities = {"ADMIN"})
     void updateRoleUser() throws Exception {
+
+        User user = new User();
+
+        user.setId(1L);
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPassword("12345678");
+        user.setPhone("+79991254698");
+        user.setRole(Role.ADMIN);
+
+
         UserDto userDto = new UserDto();
 
         userDto.setId(1);
@@ -191,13 +245,11 @@ class UserControllerTest {
         userDto.setPhone("+79991254698");
 
 
-        when(userService.updateRole(anyLong(), any(Role.class))).thenReturn(userDto);
-
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/1/updateRole")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(Role.ADMIN))
+                        .content(objectMapper.writeValueAsString(user.getRole()))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
