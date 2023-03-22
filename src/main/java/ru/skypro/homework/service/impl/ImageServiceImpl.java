@@ -18,11 +18,14 @@ import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
+
 /**
  * Имплементация сервиса для работы с картинками
  */
@@ -42,14 +45,15 @@ public class ImageServiceImpl implements ImageService {
     private final UserRepository userRepository;
 
     private final AdsMapper adsMapper;
+
     /**
      * Сохранение картинки в БД
      *
      * @param imageFile Объект картинка
      * @return Images сохраненное изображение
      * @throws IOException exception
-     * Вызывает метод:
-     *      * {@link #getExtensions(String fileName)}
+     *                     Вызывает метод:
+     *                     * {@link #getExtensions(String fileName)}
      */
     @Override
     public Image uploadImage(MultipartFile imageFile, Ads ads) throws IOException {
@@ -73,6 +77,7 @@ public class ImageServiceImpl implements ImageService {
         images.setAds(ads);
         return imagesRepository.save(images);
     }
+
     /**
      * Обновление картинки объявления
      *
@@ -80,7 +85,7 @@ public class ImageServiceImpl implements ImageService {
      * @param authentication Файл аутентификации
      * @param adsId          ID объявления
      * @return AdsDto         обьявление
-     * @throws IOException    exception
+     * @throws IOException       exception
      * @throws NotFoundException Обьявление не найдено
      */
     @Override
@@ -114,6 +119,7 @@ public class ImageServiceImpl implements ImageService {
         logger.info("Was invoked method for get extensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+
     /**
      * Получение картинки по ID
      *
@@ -127,8 +133,10 @@ public class ImageServiceImpl implements ImageService {
         logger.info("Was invoked method for get image by id");
         return imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
     }
+
     /**
      * Получение массива байтов(для фронта)
+     *
      * @param id изображения
      * @return image изображеие
      * @throws NotFoundException Картинка не найдена
@@ -140,6 +148,7 @@ public class ImageServiceImpl implements ImageService {
         Image images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
         return images.getImage();
     }
+
     /**
      * Удаление картинки по ID
      *
@@ -147,7 +156,7 @@ public class ImageServiceImpl implements ImageService {
      * @throws IOException exception
      */
     @Override
-    public void removeImage(long id) throws IOException{
+    public void removeImage(long id) throws IOException {
         logger.info("Was invoked method for delete image by id");
         Image images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
         logger.warn("image by id {} not found", id);

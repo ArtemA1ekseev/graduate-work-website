@@ -23,10 +23,12 @@ import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 /**
  * Имплементация сервиса для работы с объявлениями
  */
@@ -82,7 +84,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public boolean removeAds(long id, Authentication authentication) throws IOException{
+    public boolean removeAds(long id, Authentication authentication) throws IOException {
         logger.info("Was invoked method for delete ad by id");
         Ads ads = adsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Объявление с id " + id + " не найдено!"));

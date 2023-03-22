@@ -1,4 +1,5 @@
 package ru.skypro.homework.constant;
+
 /**
  * Класс констант для проверки номера телефона и почты
  */

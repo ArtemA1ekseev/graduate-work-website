@@ -16,9 +16,12 @@ import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.UserService;
+
 import javax.validation.ValidationException;
 import java.util.List;
+
 import static ru.skypro.homework.dto.Role.USER;
+
 /**
  * Имплеменация сервиса для работы с пользователем
  */

@@ -2,7 +2,9 @@ package ru.skypro.homework.entity;
 
 import lombok.*;
 import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
+
 /**
  * Class of Image (advertisement image/изображение в объявлениях).
  */
@@ -14,20 +16,30 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Image {
-    /** "id изображения" field */
+    /**
+     * "id изображения" field
+     */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
     @Lob
     @Type(type = "binary")
     private byte[] image;
-    /** "fileSize/размер файла */
+    /**
+     * "fileSize/размер файла
+     */
     private long fileSize;
-    /** "mediaType/тип данных */
+    /**
+     * "mediaType/тип данных
+     */
     private String mediaType;
-    /** "filePath/путь к файлу" field */
+    /**
+     * "filePath/путь к файлу" field
+     */
     private String filePath;
-    /** "ads/объявление" field */
+    /**
+     * "ads/объявление" field
+     */
     @OneToOne
     private Ads ads;
 

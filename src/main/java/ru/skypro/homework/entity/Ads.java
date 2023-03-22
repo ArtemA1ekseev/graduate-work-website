@@ -1,7 +1,9 @@
 package ru.skypro.homework.entity;
 
 import lombok.*;
+
 import javax.persistence.*;
+
 /**
  * Class of Ads (advertisement/объявление).
  */
@@ -13,20 +15,32 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Ads {
-    /** "ID/ id обьявления" field */
+    /**
+     * "ID/ id обьявления" field
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    /** "users/пользователь" field */
+    /**
+     * "users/пользователь" field
+     */
     @ManyToOne
     private User author;
-    /** "price/цена" field */
+    /**
+     * "price/цена" field
+     */
     private int price;
-    /** "title/заголовок" field */
+    /**
+     * "title/заголовок" field
+     */
     private String title;
-    /** "description/описание обьявления" field */
+    /**
+     * "description/описание обьявления" field
+     */
     private String description;
-    /** "image/изображение" field */
+    /**
+     * "image/изображение" field
+     */
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 }

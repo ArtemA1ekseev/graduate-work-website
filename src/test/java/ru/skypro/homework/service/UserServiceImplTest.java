@@ -75,7 +75,7 @@ class UserServiceImplTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
-        UserDto userDto2  = userService.createUser(new CreateUserDto());
+        UserDto userDto2 = userService.createUser(new CreateUserDto());
 
         assertEquals(userDto, userDto2);
         verify(userRepository, times(1)).save(any(User.class));

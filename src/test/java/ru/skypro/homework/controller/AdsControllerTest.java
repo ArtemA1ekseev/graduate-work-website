@@ -63,7 +63,6 @@ class AdsControllerTest {
         this.objectMapper = objectMapper;
     }
 
-
     @Test
     void getAllAds() throws Exception {
         User user1 = new User(1, "a@mail.ru", "123", "Amt", "Lom",
@@ -308,7 +307,7 @@ class AdsControllerTest {
         adsCommentDto2.setText("Комментарий");
 
 
-        when(adsService.updateAdsComment(anyInt(), anyLong(),any(AdsCommentDto.class), any())).thenReturn(adsCommentDto);
+        when(adsService.updateAdsComment(anyInt(), anyLong(), any(AdsCommentDto.class), any())).thenReturn(adsCommentDto);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/ads/1/comment/1")
                         .contentType(MediaType.APPLICATION_JSON)
