@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Type;
-
+/**
+ * Converter for support http request with header Content-Type: multipart/form-data
+ */
 @Component
 public class MultipartJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {
 
-    /**
-     * Converter for support http request with header Content-Type: multipart/form-data
-     */
     public MultipartJackson2HttpMessageConverter(ObjectMapper objectMapper) {
         super(objectMapper, MediaType.APPLICATION_OCTET_STREAM);
     }

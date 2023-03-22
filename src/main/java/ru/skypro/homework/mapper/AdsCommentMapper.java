@@ -4,7 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.skypro.homework.dto.AdsCommentDto;
 import ru.skypro.homework.entity.AdsComment;
-
+/**
+ * Interface of ads comments mapper
+ */
 @Mapper
 public interface AdsCommentMapper extends WebMapper<AdsCommentDto, AdsComment> {
 

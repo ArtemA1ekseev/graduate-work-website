@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
-import ru.skypro.homework.controller.AdsController;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.entity.Ads;
 import ru.skypro.homework.entity.Image;
@@ -23,15 +22,15 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
-
+/**
+ * Имплементация сервиса для работы с картинками
+ */
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ImageServiceImpl implements ImageService {
     Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
-
 
     @Value("${path.to.images.folder}")
     private String imagesDir;
@@ -43,7 +42,15 @@ public class ImageServiceImpl implements ImageService {
     private final UserRepository userRepository;
 
     private final AdsMapper adsMapper;
-
+    /**
+     * Сохранение картинки в БД
+     *
+     * @param imageFile Объект картинка
+     * @return Images сохраненное изображение
+     * @throws IOException exception
+     * Вызывает метод:
+     *      * {@link #getExtensions(String fileName)}
+     */
     @Override
     public Image uploadImage(MultipartFile imageFile, Ads ads) throws IOException {
         logger.info("Was invoked method for upload image");
@@ -66,14 +73,23 @@ public class ImageServiceImpl implements ImageService {
         images.setAds(ads);
         return imagesRepository.save(images);
     }
-
+    /**
+     * Обновление картинки объявления
+     *
+     * @param imageFile      Файл картинки
+     * @param authentication Файл аутентификации
+     * @param adsId          ID объявления
+     * @return AdsDto         обьявление
+     * @throws IOException    exception
+     * @throws NotFoundException Обьявление не найдено
+     */
     @Override
     public AdsDto updateImage(MultipartFile imageFile, Authentication authentication, long adsId) throws IOException {
         logger.info("Was invoked method for update image");
         Ads ads = adsRepository.findById(adsId).orElseThrow(() -> new NotFoundException("Объявление с id " + adsId + " не найдено!"));
         logger.warn("ad by id {} not found", adsId);
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        if (ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().equals("ADMIN")) {
+        if (ads.getAuthor().getEmail().equals(user.getEmail()) || user.getRole().getAuthority().equals("ADMIN")) {
             Image updatedImage = imagesRepository.findByAdsId(adsId);
             Path filePath = Path.of(updatedImage.getFilePath());
             Files.deleteIfExists(filePath);
@@ -98,14 +114,25 @@ public class ImageServiceImpl implements ImageService {
         logger.info("Was invoked method for get extensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-
+    /**
+     * Получение картинки по ID
+     *
+     * @param id Id картинки
+     * @return image изобраение
+     * @throws NotFoundException Картинка не найдена
+     */
     @Transactional(readOnly = true)
     @Override
     public Image getImage(long id) {
         logger.info("Was invoked method for get image by id");
         return imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
     }
-
+    /**
+     * Получение массива байтов(для фронта)
+     * @param id изображения
+     * @return image изображеие
+     * @throws NotFoundException Картинка не найдена
+     */
     @Transactional(readOnly = true)
     @Override
     public byte[] getImageBytesArray(long id) {
@@ -113,7 +140,12 @@ public class ImageServiceImpl implements ImageService {
         Image images = imagesRepository.findById(id).orElseThrow(() -> new NotFoundException("Картинка с id " + id + " не найдена!"));
         return images.getImage();
     }
-
+    /**
+     * Удаление картинки по ID
+     *
+     * @param id Id картинки
+     * @throws IOException exception
+     */
     @Override
     public void removeImage(long id) throws IOException{
         logger.info("Was invoked method for delete image by id");

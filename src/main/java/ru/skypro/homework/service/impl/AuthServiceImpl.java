@@ -9,13 +9,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.skypro.homework.controller.AdsController;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
-
 import javax.validation.ValidationException;
-
+/**
+ * Имплементация сервиса для регистрации пользователя и входа
+ */
 @Transactional
 @RequiredArgsConstructor
 @Service

@@ -2,7 +2,9 @@ package ru.skypro.homework.mapper;
 
 import java.util.Collection;
 import java.util.List;
-
+/**
+ * Interface of WebMapper
+ */
 public interface WebMapper<D, E> {
 
     E toEntity(D dto);

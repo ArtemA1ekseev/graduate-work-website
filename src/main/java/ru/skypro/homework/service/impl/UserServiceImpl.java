@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-import ru.skypro.homework.controller.AdsController;
 import ru.skypro.homework.dto.CreateUserDto;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UserDto;
@@ -17,19 +16,18 @@ import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
 import ru.skypro.homework.service.UserService;
-
 import javax.validation.ValidationException;
 import java.util.List;
-
 import static ru.skypro.homework.dto.Role.USER;
-
+/**
+ * Имплеменация сервиса для работы с пользователем
+ */
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
 
     private final UserRepository userRepository;
 

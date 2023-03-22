@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
-import ru.skypro.homework.controller.AdsController;
 import ru.skypro.homework.dto.AdsCommentDto;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAdsDto;
@@ -24,12 +23,13 @@ import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ * Имплементация сервиса для работы с объявлениями
+ */
 @Transactional
 @RequiredArgsConstructor
 @Service

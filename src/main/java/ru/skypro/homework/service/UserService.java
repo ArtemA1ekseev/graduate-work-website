@@ -6,7 +6,7 @@ import ru.skypro.homework.dto.UserDto;
 import java.util.List;
 
 /**
- * Сервис для работы с пользователем
+ * Интерфейс сервиса для работы с пользователем
  */
 public interface UserService {
 

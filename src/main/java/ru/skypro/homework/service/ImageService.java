@@ -8,49 +8,22 @@ import ru.skypro.homework.entity.Image;
 import java.io.IOException;
 
 /**
- * Сервис для работы с картинками
+ * Интерфейс сервиса для работы с картинками
  */
 public interface ImageService {
 
-    /**
-     * Сохранение картинки в БД
-     *
-     * @param imageFile Объект картинка
-     * @return Images
-     */
+    /** Сохранение картинки в БД */
     Image uploadImage(MultipartFile imageFile, Ads ads) throws IOException;
 
-    /**
-     * Получение картинки по ID
-     *
-     * @param id Id картинки
-     *
-     * @return Images
-     */
-    Image getImage(long id);
-
-    /**
-     * Обновление картинки объявления
-     *
-     * @param imageFile      Файл картинки
-     * @param authentication Файл аутентификации
-     * @param adsId          ID объявления
-     * @return AdsDto
-     * @throws IOException
-     */
+    /** Обновление картинки объявления */
     AdsDto updateImage(MultipartFile imageFile, Authentication authentication, long adsId) throws IOException;
 
-    /**
-     * Получение массива байтов(для фронта)
-     * @param id
-     * @return
-     */
+    /** Получение картинки по ID */
+    Image getImage(long id);
+
+    /** Получение массива байтов(для фронта)*/
     byte[] getImageBytesArray(long id);
 
-    /**
-     * Удаление картинки по ID
-     *
-     * @param id Id картинки
-     */
+    /** Удаление картинки по ID */
     void removeImage(long id) throws IOException;
 }
