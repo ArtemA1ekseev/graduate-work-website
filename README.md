@@ -113,7 +113,7 @@ The [Openapi](https://drive.google.com/file/d/1NInRupH5y59DMAFvUDcd2C0kIWaMk93Q/
 - Clone a project into a development environment
 - Register properties in the file **[application.properties](src/main/resources/application.properties)**
 - To run **[Docker](https://www.docker.com)**
-- To run **[Docker образ](https://drive.google.com/file/d/1UZTpeTAQpC4ANkHEFAGK2yjTFzZhXLPz/view)**
+- To run **[Docker image](https://drive.google.com/file/d/1UZTpeTAQpC4ANkHEFAGK2yjTFzZhXLPz/view)**
 - To run method **main** in the file **[HomeworkApplication.java](src/main/java/ru/skypro/homework/HomeworkApplication.java)**
 
 After completing all the actions, the site will be accessible by following the link http://localhost:3000 and Swagger by [link](https://editor.swagger.io/).
