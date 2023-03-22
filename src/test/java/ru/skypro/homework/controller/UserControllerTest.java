@@ -71,7 +71,6 @@ class UserControllerTest {
         createUserDto.setPassword("12345678");
         createUserDto.setPhone("+79991254698");
 
-        when(userService.createUser(any())).thenReturn(user);
         when(userMapper.toCreateUserDto(any())).thenReturn(createUserDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users").
@@ -126,8 +125,6 @@ class UserControllerTest {
         usersDto.add(userDto1);
         usersDto.add(userDto2);
 
-        when(userService.getUsers()).thenReturn(users);
-
         when(userMapper.toDto(anyCollection())).thenReturn(usersDto);
 
 
@@ -156,7 +153,6 @@ class UserControllerTest {
         userDto.setLastName("Ivanov");
         userDto.setPhone("+79991254698");
 
-        when(userService.updateUser(any())).thenReturn(user);
         when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
@@ -211,7 +207,7 @@ class UserControllerTest {
         userDto.setLastName("Ivanov");
         userDto.setPhone("+79991254698");
 
-        when(userService.getUserById(anyLong())).thenReturn(user);
+        when(userService.getUserById(anyLong())).thenReturn(userDto);
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
 
@@ -248,8 +244,6 @@ class UserControllerTest {
         userDto.setLastName("Ivanov");
         userDto.setPhone("+79991254698");
 
-
-        when(userService.updateRole(anyLong(), any(Role.class))).thenReturn(user);
 
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
