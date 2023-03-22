@@ -106,7 +106,7 @@ The [Openapi](https://drive.google.com/file/d/1NInRupH5y59DMAFvUDcd2C0kIWaMk93Q/
     - PostgreSQL
     - Liquibase
 * Frontend:
-    - Docker образ
+    - Docker image
 
 ## Launch:
 **To start, you need:**
