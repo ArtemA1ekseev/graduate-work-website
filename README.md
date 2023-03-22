@@ -26,7 +26,39 @@ CRUD для объявлений на сайте: администратор м�
  - [Бурцева Мария Михайловна](https://github.com/Marikarumba)
  - [Руднев Сергей Алексеевич](https://github.com/Kanat24)
  
- ------
+## Стек технологий:
+**В проекте используются**:
+ 
+* Backend:
+    - Java 11
+    - Maven
+    - Spring Boot
+    - Spring Web
+    - Spring Data
+    - Spring JPA
+    - Spring Security
+    - GIT
+    - REST
+    - Swagger
+    - Lombok
+    - Stream API
+* SQL:
+    - PostgreSQL
+    - Liquibase
+* Frontend:
+    - Docker образ
+
+## Запуск:
+**Для запуска нужно:**
+- Клонировать проект в среду разработки
+- Прописать properties в файле **[application.properties](src/main/resources/application.properties)**
+- Запустить **[Docker](https://www.docker.com)**
+- Запустить **[Docker образ](https://drive.google.com/file/d/1UZTpeTAQpC4ANkHEFAGK2yjTFzZhXLPz/view)**
+- Запустить метод **main** в файле **[HomeworkApplication.java](src/main/java/ru/skypro/homework/HomeworkApplication.java)**
+
+После выполнения всех действий сайт будет доступен по ссылке http://localhost:3000 и Swagger по [ссылке](https://editor.swagger.io/).
+
+------
  
 # (EN) Graduation project
 ## Group diploma work. The stream is DSprint 3.0.
@@ -54,4 +86,36 @@ The [Openapi](https://drive.google.com/file/d/1NInRupH5y59DMAFvUDcd2C0kIWaMk93Q/
  - [Burtseva Maria Mikhailovna](https://github.com/Marikarumba)
  - [Rudnev Sergey Alekseevich](https://github.com/Karat24)
  
+## Technology stack:
+**The project uses**:
+ 
+* Backend:
+    - Java 11
+    - Maven
+    - Spring Boot
+    - Spring Web
+    - Spring Data
+    - Spring JPA
+    - Spring Security
+    - GIT
+    - REST
+    - Swagger
+    - Lombok
+    - Stream API
+* SQL:
+    - PostgreSQL
+    - Liquibase
+* Frontend:
+    - Docker образ
+
+## Launch:
+**To start, you need:**
+- Clone a project into a development environment
+- Register properties in the file **[application.properties](src/main/resources/application.properties)**
+- To run **[Docker](https://www.docker.com)**
+- To run **[Docker образ](https://drive.google.com/file/d/1UZTpeTAQpC4ANkHEFAGK2yjTFzZhXLPz/view)**
+- To run method **main** in the file **[HomeworkApplication.java](src/main/java/ru/skypro/homework/HomeworkApplication.java)**
+
+After completing all the actions, the site will be accessible by following the link http://localhost:3000 and Swagger by [link](https://editor.swagger.io/).
+
  ------
