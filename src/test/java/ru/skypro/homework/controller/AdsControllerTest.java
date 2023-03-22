@@ -132,21 +132,12 @@ class AdsControllerTest {
 
         when(adsService.createAds(any(CreateAdsDto.class), any(MultipartFile.class))).thenReturn(adsDto);
 
-        /*mockMvc.perform(multipart("/ads")
+        mockMvc.perform(multipart("/ads")
                         .file(mockImage)
                         .part(new MockPart("properties", objectMapper.writeValueAsBytes(createAdsDto))))
                 .andDo(print())
-                .andExpect(status().isOk());*/
-        mockMvc.perform(patch("/ads")
-                        .content(objectMapper.writeValueAsString(createAdsDto))
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .with(request -> {
-                            request.addPart(partFile);
-
-                            return request;
-                        }))
-                .andDo(print())
                 .andExpect(status().isOk());
+
     }
 
     @Test
