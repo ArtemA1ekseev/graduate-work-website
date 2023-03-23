@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Сервис для работы с объявлениями
+ * Интерфейс сервиса для работы с объявлениями
  */
 public interface AdsService {
 
@@ -20,7 +20,7 @@ public interface AdsService {
      * Добавление объявления
      *
      * @param createAdsDto Объект объявления
-     * @param imageFile Картинка объявления
+     * @param imageFile    Картинка объявления
      * @return Ads
      */
     AdsDto createAds(CreateAdsDto createAdsDto, MultipartFile imageFile) throws IOException;
@@ -74,7 +74,7 @@ public interface AdsService {
     /**
      * Добавление комментария к объявлению
      *
-     * @param adKey      ID объявления
+     * @param adKey         ID объявления
      * @param adsCommentDto Объект комментария
      * @return AdsComment
      */
@@ -103,7 +103,7 @@ public interface AdsService {
      * @param id             ID комментария
      * @param adKey          ID объявления
      * @param authentication Аутентифицированный пользователь
-     * @return               Возвращает true если комментарий удалён, иначе false.
+     * @return Возвращает true если комментарий удалён, иначе false.
      */
     boolean deleteAdsComment(long adKey, long id, Authentication authentication);
 

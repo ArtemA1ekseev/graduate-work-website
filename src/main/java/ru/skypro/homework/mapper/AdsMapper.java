@@ -7,6 +7,9 @@ import ru.skypro.homework.dto.CreateAdsDto;
 import ru.skypro.homework.dto.FullAdsDto;
 import ru.skypro.homework.entity.Ads;
 
+/**
+ * Interface of ads mapper
+ */
 @Mapper
 public interface AdsMapper extends WebMapper<AdsDto, Ads> {
 

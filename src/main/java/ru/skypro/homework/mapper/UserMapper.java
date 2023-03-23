@@ -7,6 +7,9 @@ import ru.skypro.homework.dto.RegisterReqDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
 
+/**
+ * Interface of user mapper
+ */
 @Mapper
 public interface UserMapper extends WebMapper<UserDto, User> {
 

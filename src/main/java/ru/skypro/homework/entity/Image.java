@@ -5,6 +5,9 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
+/**
+ * Class of Image (advertisement image/изображение в объявлениях).
+ */
 @Entity
 @Table(name = "image")
 @NoArgsConstructor
@@ -13,21 +16,30 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Image {
-
+    /**
+     * "id изображения" field
+     */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-
     @Lob
     @Type(type = "binary")
     private byte[] image;
-
+    /**
+     * "fileSize/размер файла
+     */
     private long fileSize;
-
+    /**
+     * "mediaType/тип данных
+     */
     private String mediaType;
-
+    /**
+     * "filePath/путь к файлу" field
+     */
     private String filePath;
-
+    /**
+     * "ads/объявление" field
+     */
     @OneToOne
     private Ads ads;
 

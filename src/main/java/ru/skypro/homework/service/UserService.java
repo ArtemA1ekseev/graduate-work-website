@@ -3,15 +3,17 @@ package ru.skypro.homework.service;
 import ru.skypro.homework.dto.CreateUserDto;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UserDto;
+
 import java.util.List;
 
 /**
- * Сервис для работы с пользователем
+ * Интерфейс сервиса для работы с пользователем
  */
 public interface UserService {
 
     /**
      * Создание пользователя
+     *
      * @param createUserDto Объект пользователя для передачи данных
      * @return User Созданный пользователь
      */
@@ -43,7 +45,7 @@ public interface UserService {
     /**
      * Изменение пароля пользователя
      *
-     * @param newPassword новый пароль
+     * @param newPassword     новый пароль
      * @param currentPassword старый пароль
      * @return Возвращает true если пароль успешно изменен, иначе false
      */

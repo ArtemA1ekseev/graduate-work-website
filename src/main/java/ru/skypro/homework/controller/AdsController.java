@@ -3,7 +3,9 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -17,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.entity.Ads;
+import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
 
@@ -37,7 +41,19 @@ public class AdsController {
 
     private final ImageService imagesService;
 
-    @Operation(summary = "getAllAds", description = "getAllAds")
+    @Operation(summary = "Просмотр всех объявлений",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Все найденные объявления",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsDto[].class)
+                            )
+                    )
+            },
+            tags = "Ads"
+    )
     @GetMapping
     public ResponseWrapper<AdsDto> getAllAds() {
         logger.info("Request for get all ads");
@@ -46,24 +62,60 @@ public class AdsController {
 
     @SneakyThrows
     @ExceptionHandler
-    @Operation(summary = "addAds", description = "addAds")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @Operation(summary = "Создание объявления",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Созданное объявление",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsDto.class)
+                            )
+                    )
+            },
+            tags = "Ads"
+    )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "Данные нового объявления",
             required = true, schema = @Schema())
-                                         @RequestPart("image") MultipartFile image,
-                                         @RequestPart("properties") @Valid CreateAdsDto dto) {
+                                         @RequestPart(value = "Изображение", required = false) MultipartFile image,
+                                         @RequestPart("Описание объявления") @Valid CreateAdsDto dto) {
         logger.info("Request for add new ad");
         return ResponseEntity.ok(adsService.createAds(dto, image));
     }
 
-    @GetMapping(value = "images/{id}", produces = {MediaType.IMAGE_PNG_VALUE})
+    @Operation(summary = "Просмотр изображения к объявлению",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Изображение, найденное по id",
+                            content = @Content(
+                                    mediaType = MediaType.IMAGE_PNG_VALUE,
+                                    schema = @Schema(implementation = Image.class)
+                            )
+                    )
+            },
+            tags = "Image"
+    )@GetMapping(value = "images/{id}", produces = {MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
         logger.info("Request for get image by id");
         return ResponseEntity.ok(imagesService.getImageBytesArray(id));
     }
 
-    @Operation(summary = "getAdsMe", description = "getAdsMe")
+    @Operation(summary = "Просмотр всех моих объявлений",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Все мои объявления",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsDto[].class)
+                            )
+                    )
+            },
+            tags = "Ads"
+    )
     @GetMapping("/me")
     public ResponseWrapper<AdsDto> getAdsMe() {
         logger.info("Request for get my ads");
@@ -71,7 +123,19 @@ public class AdsController {
     }
 
     @SneakyThrows
-    @Operation(summary = "removeAds", description = "removeAds")
+    @Operation(summary = "Удаление объявления",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Удаленное объявление",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Ads.class)
+                            )
+                    )
+            },
+            tags = "Ads"
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> removeAds(@PathVariable long id, Authentication authentication) {
         logger.info("Request for delete ad by id");
@@ -81,7 +145,19 @@ public class AdsController {
         return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
-    @Operation(summary = "getAds", description = "getAds")
+    @Operation(summary = "Поиск объявления по id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Объявление, найденное по id",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Ads.class)
+                            )
+                    )
+            },
+            tags = "Ads"
+    )
     @GetMapping("/{id}")
     public FullAdsDto getAds(@PathVariable long id) {
         logger.info("Request for get ad by id");
@@ -89,18 +165,41 @@ public class AdsController {
     }
 
     @SneakyThrows
-    @Operation(summary = "updateAdsImage", description = "updateAdsImage")
+    @Operation(summary = "Загрузка навого изображения к объявлению",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Новое изображение",
+                            content = @Content(
+                                    mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                    schema = @Schema(implementation = AdsDto.class)
+                            )
+                    )
+            },
+            tags = "Image"
+    )
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> updateAdsImage(@PathVariable long id, Authentication authentication,
-                                                 @Parameter(in = ParameterIn.DEFAULT, description = "Новая картинка",
+    public ResponseEntity<AdsDto> updateAdsImage(@PathVariable long id, Authentication authentication, @Parameter(in = ParameterIn.DEFAULT, description = "Загрузите сюда новое изображение",
                                                          schema = @Schema())
-                                                 @RequestPart(value = "image") @Valid MultipartFile image) {
+                                                 @RequestPart(value = "Новое изображение") @Valid MultipartFile image) {
         logger.info("Request for update ad image by id");
         return ResponseEntity.ok(imagesService.updateImage(image, authentication, id));
     }
 
     @SneakyThrows
-    @Operation(summary = "updateAds", description = "updateAds")
+    @Operation(summary = "Изменение объявления",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Измененное объявление",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsDto.class)
+                            )
+                    )
+            },
+            tags = "Ads"
+    )
     @PatchMapping("/{id}")
     public ResponseEntity<AdsDto> updateAds(@PathVariable long id, Authentication authentication,
                                             @RequestBody AdsDto updatedAdsDto) {
@@ -112,21 +211,57 @@ public class AdsController {
         return ResponseEntity.ok(updateAdsDto);
     }
 
-    @Operation(summary = "getAdsComments", description = "getAdsComments")
+    @Operation(summary = "Просмотр комментариев к объявлению",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Комментарии",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsCommentDto[].class)
+                            )
+                    )
+            },
+            tags = "Comments"
+    )
     @GetMapping("/{adKey}/comments")
     public ResponseWrapper<AdsCommentDto> getAdsComments(@PathVariable int adKey) {
         logger.info("Request for get ad comment");
         return ResponseWrapper.of(adsService.getAdsComments(adKey));
     }
 
-    @Operation(summary = "addAdsComments", description = "addAdsComments")
+    @Operation(summary = "Написать комментарий к объявлению",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Комментарий",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsCommentDto.class)
+                            )
+                    )
+            },
+            tags = "Comments"
+    )
     @PostMapping("/{adKey}/comments")
     public AdsCommentDto addAdsComments(@PathVariable long adKey, @RequestBody AdsCommentDto adsCommentDto) {
         logger.info("Request for add ad comment");
         return adsService.addAdsComment(adKey, adsCommentDto);
     }
 
-    @Operation(summary = "deleteAdsComment", description = "deleteAdsComment")
+    @Operation(summary = "Удаление комментариев",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Удаленный комментарий",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsCommentDto.class)
+                            )
+                    )
+            },
+            tags = "Comments"
+    )
     @DeleteMapping("/{adKey}/comments/{id}")
     public ResponseEntity<HttpStatus> deleteAdsComment(@PathVariable int adKey, @PathVariable long id,
                                                        Authentication authentication) {
@@ -137,14 +272,38 @@ public class AdsController {
         return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 
-    @Operation(summary = "getAdsComment", description = "getAdsComment")
+    @Operation(summary = "Поиск комментария по id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Найденный комментарий",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsCommentDto.class)
+                            )
+                    )
+            },
+            tags = "Comments"
+    )
     @GetMapping("/{adKey}/comments/{id}")
     public AdsCommentDto getAdsComment(@PathVariable int adKey, @PathVariable long id) {
         logger.info("Request for get ad comment");
         return adsService.getAdsComment(adKey, id);
     }
 
-    @Operation(summary = "updateAdsComment", description = "updateAdsComment")
+    @Operation(summary = "Изменение комментария",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Измененный комментарий",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = AdsCommentDto.class)
+                            )
+                    )
+            },
+            tags = "Comments"
+    )
     @PatchMapping("/{adKey}/comment/{id}")
     public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable int adKey, @PathVariable long id,
                                                           @RequestBody AdsCommentDto updateAdsCommentDto,

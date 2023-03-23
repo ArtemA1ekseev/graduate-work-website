@@ -1,4 +1,4 @@
-package ru.skypro.homework.service.impl;
+package ru.skypro.homework.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,13 +8,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.webjars.NotFoundException;
+import ru.skypro.homework.dto.CreateUserDto;
 import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.MyUserDetails;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
+import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,81 +49,139 @@ class UserServiceImplTest {
     @Mock
     private UserDetailsServiceImpl userDetailsService;
 
+    @Mock
+    UserMapper userMapper;
+
     @InjectMocks
     private UserServiceImpl userService;
 
     @Test
     void createUser() {
-        User testUser = new User();
+        User user = new User();
+        UserDto userDto = new UserDto();
 
-        testUser.setPassword("123456789");
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPhone("+79991254698");
+
+        userDto.setEmail("a@mail.ru");
+        userDto.setFirstName("Ivan");
+        userDto.setLastName("Ivanov");
+        userDto.setPhone("+79991254698");
 
         when(userRepository.existsByEmail(any())).thenReturn(false);
-        when(passwordEncoder.encode(any())).thenReturn("12345678");
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(userMapper.createUserDtoToEntity(any(CreateUserDto.class))).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
-        User user = userService.createUser(testUser);
+        UserDto userDto2 = userService.createUser(new CreateUserDto());
 
-        assertEquals(testUser, user);
-        assertEquals(testUser.getPassword(), user.getPassword());
+        assertEquals(userDto, userDto2);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void getUsers() {
-
-        User user = new User();
+        List<User> users = new ArrayList<>();
         User user1 = new User();
+        User user2 = new User();
 
-        List<User> list = new ArrayList<>(List.of(user, user1));
+        user1.setEmail("a@mail.ru");
+        user1.setFirstName("Ivan");
+        user1.setLastName("Ivanov");
+        user1.setPhone("+79991254698");
 
-        when(userRepository.findAll()).thenReturn(list);
+        user2.setEmail("b@mail.ru");
+        user2.setFirstName("Ivan2");
+        user2.setLastName("Ivanov2");
+        user2.setPhone("+79991254699");
 
-        Collection<User> users = userService.getUsers();
+        users.add(user1);
+        users.add(user2);
 
-        assertEquals(list, users);
+        List<UserDto> usersDto = new ArrayList<>();
 
-        assertEquals(2, users.size());
+        UserDto userDto1 = new UserDto();
+        UserDto userDto2 = new UserDto();
 
+        userDto1.setEmail("a@mail.ru");
+        userDto1.setFirstName("Ivan");
+        userDto1.setLastName("Ivanov");
+        userDto1.setPhone("+79991254698");
+
+        userDto2.setEmail("b@mail.ru");
+        userDto2.setFirstName("Ivan2");
+        userDto2.setLastName("Ivanov2");
+        userDto2.setPhone("+79991254699");
+
+        usersDto.add(userDto1);
+        usersDto.add(userDto2);
+
+        when(userRepository.findAll()).thenReturn(users);
+        when(userMapper.toDto(anyCollection())).thenReturn(usersDto);
+
+        List<UserDto> usersDto2 = userService.getUsers();
+
+        assertEquals(usersDto, usersDto2);
+        assertEquals(2, usersDto2.size());
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
     void update() {
-        User testUser = new User();
+        User user = new User();
+        UserDto userDto = new UserDto();
 
-        testUser.setId(1L);
-        testUser.setEmail("abc@mail.ru");
-        testUser.setPassword("12345");
-        testUser.setRole(Role.USER);
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPhone("+79991254698");
+
+        userDto.setEmail("a@mail.ru");
+        userDto.setFirstName("Ivan");
+        userDto.setLastName("Ivanov");
+        userDto.setPhone("+79991254698");
 
         when(securityContext.getAuthentication()).thenReturn(authentication);
-
         SecurityContextHolder.setContext(securityContext);
 
-        when(getUserDetailsFromContext()).thenReturn(new MyUserDetails(testUser));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
-        User user = userService.updateUser(new User());
+        UserDto userDto2 = userService.updateUser(new UserDto());
 
-        assertEquals(testUser, user);
-
+        assertEquals(userDto, userDto2);
         verify(userRepository, times(1)).save(any(User.class));
-
     }
 
     @Test
     void getUserById() {
-        User testUser = new User();
+        User user = new User();
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
+        user.setId(1L);
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPassword("12345678");
+        user.setPhone("+79991254698");
 
-        User user = userService.getUserById(1L);
+        UserDto userDto = new UserDto();
 
-        assertEquals(testUser, user);
+        userDto.setId(1);
+        userDto.setEmail("a@mail.ru");
+        userDto.setFirstName("Ivan");
+        userDto.setLastName("Ivanov");
+        userDto.setPhone("+79991254698");
 
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+
+        UserDto userDto2 = userService.getUserById(1L);
+
+        assertEquals(userDto, userDto2);
         verify(userRepository, times(1)).findById(anyLong());
-
     }
 
     @Test
@@ -141,9 +204,11 @@ class UserServiceImplTest {
 
         SecurityContextHolder.setContext(securityContext);
 
-        when(getUserDetailsFromContext()).thenReturn(new MyUserDetails(testUser));
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(any(), any())).thenReturn(true);
         when(passwordEncoder.encode(any())).thenReturn("12345678");
+        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(userDetailsService.loadUserByUsername(any())).thenReturn(new MyUserDetails(testUser));
 
         userService.newPassword("12345678", "87654321");
 
@@ -152,16 +217,32 @@ class UserServiceImplTest {
 
     @Test
     void updateRoleUser() {
-        User testUser = new User();
-        testUser.setEmail("b@maiil.ru");
+        User user = new User();
 
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        user.setId(1L);
+        user.setEmail("a@mail.ru");
+        user.setFirstName("Ivan");
+        user.setLastName("Ivanov");
+        user.setPassword("12345678");
+        user.setPhone("+79991254698");
+        user.setRole(Role.ADMIN);
 
-        User user = userService.updateRole(1L, Role.USER);
 
-        assertEquals(testUser, user);
+        UserDto userDto = new UserDto();
 
+        userDto.setId(1);
+        userDto.setEmail("a@mail.ru");
+        userDto.setFirstName("Ivan");
+        userDto.setLastName("Ivanov");
+        userDto.setPhone("+79991254698");
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+
+        UserDto userDto2 = userService.updateRole(1L, Role.USER);
+
+        assertEquals(userDto, userDto2);
         verify(userRepository, times(1)).findById(anyLong());
         verify(userRepository, times(1)).save(any(User.class));
     }
