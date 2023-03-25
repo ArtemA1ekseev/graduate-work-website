@@ -145,7 +145,7 @@ public class AdsController {
     }
 
     @Operation(summary = "updateAdsComment", description = "updateAdsComment")
-    @PatchMapping("/{adKey}/comment/{id}")
+    @PatchMapping("/{adKey}/comments/{id}")
     public ResponseEntity<AdsCommentDto> updateAdsComment(@PathVariable int adKey, @PathVariable long id,
                                                           @RequestBody AdsCommentDto updateAdsCommentDto,
                                                           Authentication authentication) {
