@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,13 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers() {
         logger.info("Was invoked method for get users");
         return userMapper.toDto(userRepository.findAll());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserDto getUserMe(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        return userMapper.toDto(user);
     }
 
     @Override
