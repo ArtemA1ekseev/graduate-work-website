@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.UserService;
@@ -63,9 +64,9 @@ public class UserController {
             tags = "Users"
     )
     @GetMapping("/me")
-    public ResponseWrapper<UserDto> getUsers() {
+    public ResponseEntity<UserDto> getUserMe(Authentication authentication) {
         logger.info("Request for get users");
-        return ResponseWrapper.of(userService.getUsers());
+        return ResponseEntity.ok(userService.getUserMe(authentication));
     }
 
     @Operation(summary = "Изменение информации о пользователе",
