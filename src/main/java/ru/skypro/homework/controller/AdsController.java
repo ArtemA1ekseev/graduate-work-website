@@ -79,8 +79,8 @@ public class AdsController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(in = ParameterIn.DEFAULT, description = "Данные нового объявления",
             required = true, schema = @Schema())
-                                         @RequestPart(value = "Изображение", required = false) MultipartFile image,
-                                         @RequestPart("Описание объявления") @Valid CreateAdsDto dto) {
+                                         @RequestPart("image") MultipartFile image,
+                                         @RequestPart("properties") @Valid CreateAdsDto dto) {
         logger.info("Request for add new ad");
         return ResponseEntity.ok(adsService.createAds(dto, image));
     }
@@ -181,7 +181,7 @@ public class AdsController {
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> updateAdsImage(@PathVariable long id, Authentication authentication, @Parameter(in = ParameterIn.DEFAULT, description = "Загрузите сюда новое изображение",
                                                          schema = @Schema())
-                                                 @RequestPart(value = "Новое изображение") @Valid MultipartFile image) {
+                                                 @RequestPart(value = "image") @Valid MultipartFile image) {
         logger.info("Request for update ad image by id");
         return ResponseEntity.ok(imagesService.updateImage(image, authentication, id));
     }
