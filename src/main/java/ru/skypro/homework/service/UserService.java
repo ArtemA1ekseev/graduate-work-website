@@ -1,5 +1,6 @@
 package ru.skypro.homework.service;
 
+import org.springframework.security.core.Authentication;
 import ru.skypro.homework.dto.CreateUserDto;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UserDto;
@@ -25,6 +26,8 @@ public interface UserService {
      * @return Collection<User>
      */
     List<UserDto> getUsers();
+
+    UserDto getUserMe(Authentication authentication);
 
     /**
      * Изменение пользователя
