@@ -310,7 +310,7 @@ class AdsControllerTest {
 
         when(adsService.updateAdsComment(anyInt(), anyLong(),any(AdsCommentDto.class), any())).thenReturn(adsCommentDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/ads/1/comment/1")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/ads/1/comments/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(adsCommentDto2))
                         .accept(MediaType.APPLICATION_JSON))
