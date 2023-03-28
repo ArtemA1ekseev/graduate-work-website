@@ -85,34 +85,22 @@ class UserControllerTest {
 
     @Test
     void getUsers() throws Exception {
-        List<UserDto> usersDto = new ArrayList<>();
+        UserDto userDto = new UserDto();
 
-        UserDto userDto1 = new UserDto();
-        UserDto userDto2 = new UserDto();
+        userDto.setEmail("a@mail.ru");
+        userDto.setFirstName("Ivan");
+        userDto.setLastName("Ivanov");
+        userDto.setPhone("+79991254698");
 
-        userDto1.setEmail("a@mail.ru");
-        userDto1.setFirstName("Ivan");
-        userDto1.setLastName("Ivanov");
-        userDto1.setPhone("+79991254698");
-
-        userDto2.setEmail("b@mail.ru");
-        userDto2.setFirstName("Ivan2");
-        userDto2.setLastName("Ivanov2");
-        userDto2.setPhone("+79991254699");
-
-        usersDto.add(userDto1);
-        usersDto.add(userDto2);
-
-        when(userService.getUsers()).thenReturn(usersDto);
+        when(userService.getUserMe(any())).thenReturn(userDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/me"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(2))
-                .andExpect(jsonPath("$.results[0]").value(usersDto.get(0)))
-                .andExpect(jsonPath("$.results[1]").value(usersDto.get(1)))
-                .andExpect(jsonPath("$.results[0].email").value(userDto1.getEmail()))
-                .andExpect(jsonPath("$.results[1].email").value(userDto2.getEmail()));
+                .andExpect(jsonPath("$.email").value(userDto.getEmail()))
+                .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userDto.getLastName()))
+                .andExpect(jsonPath("$.phone").value(userDto.getPhone()));
     }
 
     @Test
@@ -189,6 +177,7 @@ class UserControllerTest {
         userDto.setFirstName("Ivan");
         userDto.setLastName("Ivanov");
         userDto.setPhone("+79991254698");
+
 
 
         when(userService.updateRole(anyLong(), any(Role.class))).thenReturn(userDto);
