@@ -752,7 +752,7 @@ components:
           type: string
         username:
           type: string
-      title: LoginReq
+      title: LoginReqDto
       type: object
     NewPassword:
       example:

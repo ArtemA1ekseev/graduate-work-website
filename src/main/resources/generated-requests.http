@@ -14,11 +14,11 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-   "username": "user",
-   "password": "password",
-   "firstName":  " asdad",
-   "lastName": " asdad",
-   "phone":  " asdad"
+  "username": "user",
+  "password": "password",
+  "firstName":  " asdad",
+  "lastName": " asdad",
+  "phone":  " asdad"
 }
 
 ###
@@ -91,8 +91,3 @@ Authorization: Basic user password
 GET http://localhost:8080/ads
 Content-Type: application/json
 Authorization: Basic user password
-
-
-
-
-
